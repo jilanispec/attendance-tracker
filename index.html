@@ -1,171 +1,452 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#080d1b">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>JILAN ATTENDANCE</title>
 <style>
-:root{color-scheme:dark;--bg:#080d1b;--glass:#ffffff0d;--line:#ffffff24;--txt:#eff5ff;--muted:#a9b8d3;--blue:#9bbcff;--green:#6ee7b7;--red:#fb7185;--amber:#fcd34d}
+:root{color-scheme:dark;--bg:#101827;--panel:#1c2940;--line:#34425b;--blue:#8db7ff;--text:#edf3ff;--muted:#aab8d0}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;color:var(--txt);font:15px/1.5 system-ui;background:radial-gradient(ellipse at 10% 5%,#253c70,transparent 35%),radial-gradient(ellipse at 90% 25%,#49336a,transparent 30%),linear-gradient(145deg,#070b16,#111b31 55%,#090e1b);background-attachment:fixed}
-button,input,select{font:inherit}button{cursor:pointer}
-main{max-width:1000px;margin:auto;padding:18px 12px 45px}
-.glass{background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:16px;margin:12px 0;backdrop-filter:blur(18px)}
-h1{font-size:clamp(1.5rem,5vw,2.2rem);margin:0}h2{font-size:1.1rem;margin:0 0 12px}
-.muted,.help{color:var(--muted)}.help{font-size:.86rem}
-.brand,.head{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.brand{justify-content:flex-start}
-.logo{display:grid;place-items:center;width:46px;height:46px;border-radius:15px;background:#9bbcff30;font-size:24px}
-input,select{width:100%;min-width:0;color:var(--txt);background:#080d1bcc;border:1px solid var(--line);border-radius:11px;padding:11px}
-label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:5px}
-.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.btn{border:1px solid var(--line);border-radius:11px;padding:10px 13px;color:var(--txt);background:#ffffff15;font-weight:700}
-.primary{background:linear-gradient(135deg,#9bbcff,#c2a5ff);border:0;color:#10162b}
-.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+body{margin:0;background:linear-gradient(130deg,#142947,#302344);font:15px Arial,sans-serif;color:var(--text);min-height:100vh}
+header{padding:22px 16px;text-align:center;background:#101827dd;border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:24px;letter-spacing:1px} header p{color:var(--muted);margin:8px 0 0}
+main{max-width:950px;margin:auto;padding:14px}
+.panel{background:#182338eF;border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
+h2{font-size:18px;margin:0 0 14px}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
+input,select,button{font:inherit;border-radius:9px;padding:12px;width:100%;border:1px solid var(--line);background:#0e1728;color:var(--text)}
+button{cursor:pointer;background:#8db7ff;color:#0c1a30;font-weight:bold;border:0;margin-top:10px}
+button.secondary{background:#2b3b57;color:var(--text);border:1px solid var(--line)}
+button.danger{background:#61313c;color:white}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:100px}
 .hidden{display:none!important}
-.nav{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0}
-.nav .active{background:var(--blue);color:#10162b}
-.semgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.stats,.subjectgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-.stat,.subjectcard{background:#0002;border:1px solid var(--line);border-radius:15px;padding:12px;min-width:0}
-.stat small{display:block;color:var(--muted)}.stat strong{font-size:1.35rem}
-.progress{height:7px;background:#ffffff18;border-radius:9px;overflow:hidden}
-.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--blue))}
-.ring{float:right;font-weight:800;color:var(--green)}
-.metricrow{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:10px}
-.metric{padding:7px;background:#0002;border-radius:9px}
-.metric small{display:block;color:var(--muted);font-size:.7rem}
-.daysession{display:grid;grid-template-columns:35px minmax(0,1fr) 120px;align-items:center;gap:7px;padding:9px;margin:7px 0;border:1px solid var(--line);border-radius:12px;background:#0002}
-.period{font-weight:800;color:#d3c5ff}.sessionname{font-weight:700}
-.sessionmeta{font-size:.75rem;color:var(--muted)}
-.msg{padding:10px;border:1px solid var(--line);border-radius:10px;margin:10px 0;color:var(--muted)}
-.monthnav{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.daycard{display:grid;grid-template-columns:48px minmax(0,1fr);gap:7px;margin:9px 0}
-.daydate{text-align:center;padding-top:8px}.daydate b{display:block;font-size:1.4rem}
-.daybox{background:#ffffff08;border:1px solid var(--line);border-radius:14px;padding:10px;min-width:0}
-.tiles{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:8px}
-.tile{text-align:center;border-radius:8px;padding:7px 0;font-size:.75rem;font-weight:800}
-.tile small{display:block;font-size:.6rem}
-.p{background:#164637;color:#a7f3d0}.a{background:#612c3c;color:#fecdd3}.n{background:#33384b;color:#cbd5e1}
-.chip{display:inline-flex;gap:7px;padding:6px 9px;margin:3px;background:#ffffff12;border-radius:30px}
-.chip button{border:0;background:none;color:var(--red)}
-.auth{max-width:440px;margin:8vh auto;padding:12px}.auth .glass{padding:22px}
-.status{margin-top:8px;font-weight:700}.good{color:var(--green)}.bad{color:var(--red)}
-@media(max-width:600px){
- .glass{padding:12px}.fields{grid-template-columns:1fr 1fr}
- .subjectgrid{grid-template-columns:1fr}
- .daysession{grid-template-columns:30px minmax(0,1fr) 108px;gap:5px;padding:6px}
- .btn{padding:9px}.nav button{font-size:.78rem}.tiles{gap:3px}
-}
+.muted{color:var(--muted);font-size:13px;line-height:1.5}
+.subject{padding:12px;border:1px solid var(--line);border-radius:12px;margin:9px 0;background:#111c2e}
+.subject-head{display:flex;justify-content:space-between;gap:8px;font-weight:bold}
+.pills{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:10px}
+.pills button{padding:9px 4px;margin:0;font-size:13px}
+.pills button.chosen{outline:2px solid var(--blue);background:#375c8e;color:white}
+.statgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.stat{background:#101a2b;padding:12px;border:1px solid var(--line);border-radius:10px}
+.stat small{display:block;color:var(--muted);margin-bottom:7px}
+.stat strong{font-size:20px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:10px 7px;border-bottom:1px solid var(--line)}
+th{color:var(--muted)}
+.tablewrap{overflow-x:auto}
+#message{padding:10px;border-radius:9px;margin:10px 0;white-space:pre-wrap}
+.ok{background:#163b32;color:#a8f0d2}.err{background:#512a36;color:#ffd1d9}
+@media(max-width:520px){main{padding:8px}.panel{padding:12px}.grid{grid-template-columns:1fr}.pills button{font-size:12px}h1{font-size:21px}}
 </style>
 </head>
 <body>
-<div id="authView" class="auth">
- <div class="glass">
-  <div class="brand"><div class="logo">✦</div><div><h1>JILAN ATTENDANCE</h1><div class="muted">Your semesters, your records</div></div></div>
-  <p class="help">Sign in or create an account using your real email address.</p>
-  <label for="email">Email address</label><input id="email" type="email" autocomplete="email" placeholder="you@example.com">
-  <label for="password" style="margin-top:10px">Password</label><input id="password" type="password" autocomplete="current-password" placeholder="At least 8 characters">
-  <div class="btnrow"><button id="loginBtn" class="btn primary">Sign in</button><button id="signupBtn" class="btn">Create account</button></div>
-  <p id="authMsg" class="help"></p>
- </div>
-</div>
-<main id="appView" class="hidden">
- <header class="head"><div class="brand"><div class="logo">✦</div><div><h1>JILAN ATTENDANCE</h1><div class="muted" id="welcome">Attendance tracker</div></div></div><button id="logoutBtn" class="btn">Log out</button></header>
- <section class="glass"><div class="head"><h2>Choose semester</h2><span id="syncState" class="help">Not saved yet</span></div><div id="semesters" class="semgrid"></div></section>
- <nav class="nav"><button class="btn active" data-page="entry">Attendance</button><button class="btn" data-page="report">Reports</button><button class="btn" data-page="settings">Subjects & setup</button></nav>
- <section id="entryPage" class="page">
-  <div class="glass"><h2>Attendance entry</h2>
-   <div class="fields"><div><label for="entryDate">Date</label><input id="entryDate" type="date"></div><div><label for="dayType">Day type</label><select id="dayType"><option value="normal">Working day</option><option value="holiday">University holiday</option><option value="saturday_working">Saturday replacement working day</option></select></div></div>
-   <div id="dayNote" class="msg">Choose a date.</div><div id="sessions"></div>
-   <div class="btnrow"><button id="saveDay" class="btn primary">Save attendance</button><button id="allP" class="btn">All present</button><button id="allA" class="btn">All absent</button><button id="allN" class="btn">All not held</button></div>
-   <p class="help">Today's entries close at 6:00 PM local time. Past dates remain editable. Not Held and holidays do not count as conducted sessions.</p>
-  </div>
-  <div class="glass"><div class="monthnav"><button id="prevMonth" class="btn">←</button><strong id="monthLabel"></strong><button id="nextMonth" class="btn">→</button></div><div id="history"></div></div>
- </section>
- <section id="reportPage" class="page hidden">
-  <div class="glass"><h2>Overall attendance</h2><div class="stats">
-   <div class="stat"><small>Overall %</small><strong id="overallPct">—</strong><div class="progress"><span id="overallBar" style="width:0%"></span></div></div>
-   <div class="stat"><small>Conducted</small><strong id="conducted">0</strong></div><div class="stat"><small>Attended</small><strong id="attended">0</strong></div><div class="stat"><small>Absent</small><strong id="absent">0</strong></div><div class="stat"><small>Target</small><strong id="targetLabel">75%</strong></div><div class="stat"><small>Eligibility</small><strong id="eligible">—</strong></div>
-  </div><p id="overallExtra" class="help"></p></div>
-  <div class="glass"><h2>Subject-wise report</h2><div id="subjectCards" class="subjectgrid"></div></div>
-  <div class="glass"><h2>Historical opening balances</h2><p class="help">Enter sessions conducted and attended before you started this tracker.</p><div id="baselineCards" class="subjectgrid"></div><button id="saveBaseline" class="btn primary" style="margin-top:10px">Save opening balances</button></div>
- </section>
- <section id="settingsPage" class="page hidden">
-  <div class="glass"><h2>Subjects — Semester <span id="settingSem">1</span></h2>
-   <div class="fields"><div><label for="newSubject">Subject name</label><input id="newSubject" placeholder="Mathematics"></div><div><label for="newCode">Course code</label><input id="newCode" placeholder="Course code"></div></div>
-   <div class="btnrow"><button id="addSubject" class="btn primary">Add subject</button><button id="loadSem1" class="btn">Load Sem 1 timetable</button></div><div id="subjectChips" style="margin-top:10px"></div>
-  </div>
-  <div class="glass"><h2>Semester settings</h2><div class="fields">
-   <div><label for="targetInput">Attendance target %</label><input id="targetInput" type="number" min="1" max="100"></div>
-   <div><label for="replacement">Saturday follows</label><select id="replacement"><option>Friday</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option></select></div>
-   <div><label for="semStart">Semester start</label><input id="semStart" type="date"></div><div><label for="semEnd">Semester end</label><input id="semEnd" type="date"></div>
-  </div><div class="btnrow"><button id="saveSettings" class="btn primary">Save settings</button><button id="export" class="btn">Export backup</button><label class="btn" for="importFile">Import backup</label><input id="importFile" type="file" accept="application/json" hidden></div></div>
- </section>
+<header>
+  <h1>JILAN ATTENDANCE</h1>
+  <p>Semester tracker · Daily attendance · Subject-wise reports</p>
+</header>
+<main>
+  <div id="message" class="hidden"></div>
+
+  <section id="auth" class="panel">
+    <h2>Login or create account</h2>
+    <p class="muted">Use your real email address and password.</p>
+    <label for="email">Email</label>
+    <input id="email" type="email" autocomplete="email" placeholder="you@example.com">
+    <label for="password">Password</label>
+    <input id="password" type="password" autocomplete="current-password" placeholder="Password">
+    <div class="grid">
+      <button id="login">Login</button>
+      <button id="signup" class="secondary">Sign up</button>
+    </div>
+  </section>
+
+  <section id="app" class="hidden">
+    <section class="panel">
+      <div class="grid">
+        <div><label for="semester">Semester</label>
+          <select id="semester">
+            <option value="1">Semester 1</option><option value="2">Semester 2</option>
+            <option value="3">Semester 3</option><option value="4">Semester 4</option>
+            <option value="5">Semester 5</option><option value="6">Semester 6</option>
+            <option value="7">Semester 7</option><option value="8">Semester 8</option>
+          </select>
+        </div>
+        <div><label>Account</label><button id="logout" class="secondary">Log out</button></div>
+      </div>
+      <div class="tabs">
+        <button data-tab="entry">Attendance</button>
+        <button data-tab="reports" class="secondary">Reports</button>
+        <button data-tab="setup" class="secondary">Subjects & setup</button>
+      </div>
+    </section>
+
+    <section id="entry" class="panel">
+      <h2>Daily attendance</h2>
+      <label for="date">Attendance date</label>
+      <input id="date" type="date">
+      <label for="daytype">Day type</label>
+      <select id="daytype">
+        <option value="working">Working day</option>
+        <option value="holiday">Holiday</option>
+        <option value="saturday">Replacement working Saturday</option>
+      </select>
+      <p id="dayinfo" class="muted">Choose each session as Present, Absent, or Not Held.</p>
+      <div id="sessions"></div>
+      <button id="save">Save attendance</button>
+      <button id="clearDay" class="secondary">Clear this date</button>
+      <p class="muted">Today's attendance entry closes at 6:00 PM local device time. Past dates can still be entered. Save each date after making changes.</p>
+    </section>
+
+    <section id="reports" class="panel hidden">
+      <h2>Overall attendance</h2>
+      <div class="statgrid">
+        <div class="stat"><small>Attendance percentage</small><strong id="overallPct">—</strong></div>
+        <div class="stat"><small>Sessions conducted</small><strong id="overallConducted">0</strong></div>
+        <div class="stat"><small>Attended</small><strong id="overallPresent">0</strong></div>
+        <div class="stat"><small>Absent</small><strong id="overallAbsent">0</strong></div>
+      </div>
+      <p class="muted">Eligibility target: 75%. Holidays and Not Held sessions are excluded.</p>
+      <h2>Subject-wise report</h2>
+      <div class="tablewrap">
+        <table><thead><tr><th>Subject</th><th>Semester total</th><th>Conducted</th><th>Present</th><th>Absent</th><th>%</th></tr></thead>
+        <tbody id="reportRows"></tbody></table>
+      </div>
+      <h2 style="margin-top:22px">Saved dates</h2>
+      <div class="tablewrap">
+        <table><thead><tr><th>Date</th><th>Day type</th><th>Conducted</th><th>Present</th><th>Absent</th></tr></thead>
+        <tbody id="dateRows"></tbody></table>
+      </div>
+    </section>
+
+    <section id="setup" class="panel hidden">
+      <h2>Subjects & semester totals</h2>
+      <p class="muted">Semester 1 totals are based on the college course-wise summary you shared. These totals are informational and do not count as conducted sessions.</p>
+      <div class="tablewrap">
+        <table><thead><tr><th>Subject</th><th>Code</th><th>Total semester sessions</th></tr></thead>
+        <tbody id="setupRows"></tbody></table>
+      </div>
+      <p class="muted">Other semesters are available for selection, but their subject lists and totals have not been supplied yet.</p>
+      <button id="refresh" class="secondary">Refresh reports</button>
+    </section>
+  </section>
 </main>
-<!-- PART 2 GOES HERE -->
 </body>
 </html>
-
-
 <script type="module">
-import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-const SUPABASE_URL='https://ghedfccwvpbjfjujtdho.supabase.co';
-const SUPABASE_ANON_KEY='sb_publishable_AEiwDryd3bJ7A3zZU6HzQw_T75ecLrf';
-const sb=createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-const $=id=>document.getElementById(id);
-const todayKey=()=>{let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
-const parseDate=s=>{let [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
-const weekday=d=>['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d.getDay()];
-const key=(name,code)=>name+'|'+(code||'');
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const timetable={
- Monday:[['DT','6005'],['PSC','6005'],['Chemistry','6106'],['English','6106'],['Library','OPTIONAL'],['Mentoring','OPTIONAL'],['Chemistry','6307']],
- Tuesday:[['Maths','6107'],['DT','6107'],['PSC','6002'],['ES','6002'],['ES','6106'],['English','6106'],['DT','6005']],
- Wednesday:[['IE','6107'],['Counselling','OPTIONAL'],['PSC Lab','8202'],['PSC Lab','8202'],['PSC','8102'],['Maths Lab','8201'],['Maths Lab','8201']],
- Thursday:[['Chemistry','6107'],['IE','6107'],['English Lab','33319'],['English Lab','33319'],['Maths','6106'],['Biology','6106'],['ES','6104']],
- Friday:[['Maths','6106'],['IE','6106'],['Chemistry Lab','8002'],['Chemistry Lab','8002'],['PSC','6313'],['Chemistry','6107'],['IE','6107']]
+const SUPABASE_URL = "https://ghedfccwvpbjfjujtdho.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_AEiwDryd3bJ7A3zZU6HzQw_T75ecLrf";
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const subjects = [
+  {name:"Maths",code:"2510MA2001",total:75},
+  {name:"Chemistry",code:"2510CH1002",total:45},
+  {name:"Chemistry Lab",code:"2510CH3001",total:30},
+  {name:"PSC",code:"2510CS1001",total:45},
+  {name:"PSC Lab",code:"2510CS3001",total:30},
+  {name:"Biology",code:"2519BT1001",total:15},
+  {name:"English",code:"2510EN2001",total:45},
+  {name:"DT",code:"2510GE1001",total:50},
+  {name:"ES",code:"2510PH1002",total:45},
+  {name:"IE",code:"2510GE1002",total:45}
+];
+
+const timetable = {
+  Monday:["DT","PSC","Chemistry","English","Library","Mentoring","Chemistry"],
+  Tuesday:["Maths","DT","PSC","ES","ES","English","DT"],
+  Wednesday:["IE","Counselling","PSC Lab","PSC Lab","PSC","Maths Lab","Maths Lab"],
+  Thursday:["Chemistry","IE","English Lab","English Lab","Maths","Biology","ES"],
+  Friday:["Maths","IE","Chemistry Lab","Chemistry Lab","PSC","Chemistry","IE"]
 };
-const freshSem=()=>({target:75,start:'',end:'',replacement:'Friday',subjects:[],days:{},baseline:{}});
-let user=null,sem=0,month=new Date(new Date().getFullYear(),new Date().getMonth(),1),data={semesters:Array.from({length:8},freshSem)};
-const cur=()=>data.semesters[sem];
-function seed(x){let m=new Map();Object.values(timetable).flat().forEach(([name,code])=>m.set(key(name,code),{name,code}));[['Library','OPTIONAL'],['Mentoring','OPTIONAL'],['Counselling','OPTIONAL']].forEach(([name,code])=>m.set(key(name,code),{name,code}));x.subjects=[...m.values()]}
-function normalize(v){if(!v||!Array.isArray(v.semesters)||v.semesters.length!==8)return {semesters:Array.from({length:8},freshSem)};v.semesters.forEach(s=>{s.days||={};s.baseline||={};s.subjects||=[];s.target||=75;s.replacement||='Friday'});return v}
-async function persist(){if(!user)return;$('syncState').textContent='Saving…';let {error}=await sb.from('attendance_data').upsert({user_id:user.id,payload:data,updated_at:new Date().toISOString()});$('syncState').textContent=error?'Save error':'Saved';if(error)console.error(error)}
-async function loadData(){let {data:r,error}=await sb.from('attendance_data').select('payload').eq('user_id',user.id).maybeSingle();if(error)throw error;if(r?.payload)return normalize(r.payload);let d=normalize(null);seed(d.semesters[0]);return d}
-function authMessage(t){$('authMsg').textContent=t}
-async function auth(mode){let email=$('email').value.trim().toLowerCase(),password=$('password').value;if(!email.includes('@'))return authMessage('Enter a valid email address.');if(password.length<8)return authMessage('Password must have at least 8 characters.');authMessage('Please wait…');try{let r=mode==='signup'?await sb.auth.signUp({email,password}):await sb.auth.signInWithPassword({email,password});if(r.error)return authMessage(r.error.message);if(mode==='signup'&&!r.data.session){authMessage('Account created. If confirmation is enabled, confirm your email, then sign in.');return}user=r.data.user;await openApp()}catch(e){authMessage(e.message||'Authentication failed.')}}
-async function openApp(){try{data=await loadData();$('authView').classList.add('hidden');$('appView').classList.remove('hidden');$('welcome').textContent='Signed in · '+(user.email||'student');renderAll()}catch(e){authMessage('Could not load data: '+e.message)}}
-async function logout(){await sb.auth.signOut();user=null;$('appView').classList.add('hidden');$('authView').classList.remove('hidden')}
-function renderSem(){let r=$('semesters');r.innerHTML='';data.semesters.forEach((_,i)=>{let b=document.createElement('button');b.className='btn'+(i===sem?' active':'');b.textContent='Sem '+(i+1);b.onclick=()=>{sem=i;renderAll()};r.append(b)});$('settingSem').textContent=sem+1}
-function renderSubjects(){let x=cur(),r=$('subjectChips');r.innerHTML='';x.subjects.forEach((s,i)=>{let e=document.createElement('span');e.className='chip';e.innerHTML=`${esc(s.name)} ${esc(s.code)} <button type="button">×</button>`;e.querySelector('button').onclick=async()=>{if(confirm('Remove '+s.name+'?')){x.subjects.splice(i,1);await persist();renderAll()}};r.append(e)})}
-function renderSettings(){let x=cur();$('targetInput').value=x.target;$('replacement').value=x.replacement;$('semStart').value=x.start;$('semEnd').value=x.end}
-function dateType(date){if(cur().days[date])return cur().days[date].type;let d=parseDate(date);return d.getDay()===0||d.getDay()===6?'holiday':'normal'}
-function schedule(date,type){let d=parseDate(date),day=type==='saturday_working'?cur().replacement:weekday(d);return (timetable[day]||[]).map(([subject,code],i)=>({period:i+1,subject,code,status:['Library','Mentoring','Counselling'].includes(subject)?'N':''}))}
-function renderEntry(typeOverride){let date=$('entryDate').value||todayKey();$('entryDate').value=date;let old=cur().days[date],type=typeOverride||old?.type||dateType(date);$('dayType').value=type;let d=parseDate(date);$('dayNote').textContent=type==='holiday'?'University holiday: no sessions count as conducted.':type==='saturday_working'?`Replacement working day: ${cur().replacement} timetable.`:`${weekday(d)} timetable.`;let sessions=old?.sessions||schedule(date,type);if(type==='holiday'){$('sessions').innerHTML='<div class="msg">University holiday — no sessions.</div>';return}$('sessions').innerHTML='';sessions.forEach((s,i)=>{let row=document.createElement('div');row.className='daysession';row.innerHTML=`<div class="period">P${s.period||i+1}</div><div><div class="sessionname">${esc(s.subject)}</div><div class="sessionmeta">Course ${esc(s.code||'')}</div></div><select data-i="${i}"><option value="">Not entered</option><option value="P">Present</option><option value="A">Absent</option><option value="N">Not Held</option></select>`;row.querySelector('select').value=s.status||'';$('sessions').append(row)})}
-async function saveDay(){let date=$('entryDate').value,type=$('dayType').value,x=cur();if(!date)return alert('Choose a date.');let now=new Date();if(date===todayKey()&&now.getHours()>=18){$('dayNote').textContent='Today’s attendance entry is closed after 6 PM. Past dates remain editable.';return}if(type==='saturday_working'&&parseDate(date).getDay()!==6)return alert('Replacement working day must be a Saturday.');if(type==='holiday'){x.days[date]={type,sessions:[]};await persist();renderAll();return}let sessions=schedule(date,type);document.querySelectorAll('#sessions select[data-i]').forEach(el=>{let i=Number(el.dataset.i);if(sessions[i])sessions[i].status=el.value});x.days[date]={type,sessions};await persist();renderAll()}
-function markAll(v){document.querySelectorAll('#sessions select[data-i]').forEach(el=>el.value=v)}
-function stats(s){let b=cur().baseline[s.key]||{},p=Number(b.attended)||0,c=Number(b.conducted)||0;Object.values(cur().days).forEach(d=>{if(d.type==='holiday')return;(d.sessions||[]).forEach(a=>{if(key(a.subject,a.code)!==s.key)return;if(a.status==='P'){p++;c++}else if(a.status==='A')c++})});return {p,c,a:c-p,pct:c?100*p/c:0}}
-function allSubjects(){return cur().subjects.map(s=>({...s,key:key(s.name,s.code)}))}
-function renderBaseline(){let r=$('baselineCards');r.innerHTML='';allSubjects().forEach(s=>{let b=cur().baseline[s.key]||{conducted:0,attended:0},e=document.createElement('div');e.className='subjectcard';e.innerHTML=`<b>${esc(s.name)}</b><div class="help">${esc(s.code)}</div><div class="fields"><div><label>Previously conducted</label><input type="number" min="0" data-con="${esc(s.key)}" value="${b.conducted}"></div><div><label>Previously attended</label><input type="number" min="0" data-att="${esc(s.key)}" value="${b.attended}"></div></div>`;r.append(e)})}
-function renderReport(){let all=allSubjects(),n={p:0,c:0};all.forEach(s=>{let t=stats(s);n.p+=t.p;n.c+=t.c});let pct=n.c?100*n.p/n.c:0;$('overallPct').textContent=n.c?pct.toFixed(1)+'%':'—';$('overallBar').style.width=Math.min(100,pct)+'%';$('conducted').textContent=n.c;$('attended').textContent=n.p;$('absent').textContent=n.c-n.p;$('targetLabel').textContent=cur().target+'%';$('eligible').textContent=n.c?(pct>=cur().target?'Eligible':'Not eligible'):'—';$('overallExtra').textContent='Attended ÷ conducted × 100. Not Held and holidays are excluded.';$('subjectCards').innerHTML=all.map(s=>{let t=stats(s);return `<article class="subjectcard"><div class="ring">${t.c?t.pct.toFixed(1)+'%':'—'}</div><b>${esc(s.name)}</b><div class="help">${esc(s.code)}</div><div class="progress"><span style="width:${Math.min(100,t.pct)}%"></span></div><div class="metricrow"><div class="metric"><small>Conducted</small><b>${t.c}</b></div><div class="metric"><small>Attended</small><b>${t.p}</b></div><div class="metric"><small>Absent</small><b>${t.a}</b></div></div><div class="status ${t.c&&t.pct>=cur().target?'good':'bad'}">${t.c?(t.pct>=cur().target?'Eligible':'Below target'):'No records yet'}</div></article>`}).join('');renderBaseline()}
-async function saveBaseline(){let out={};for(let e of document.querySelectorAll('[data-con]')){let k=e.dataset.con,c=Math.max(0,Number(e.value)||0),a=Math.max(0,Number(document.querySelector(`[data-att="${CSS.escape(k)}"]`).value)||0);if(a>c)return alert('Attended cannot exceed conducted.');out[k]={conducted:c,attended:a}}cur().baseline=out;await persist();renderReport()}
-function renderHistory(){let y=month.getFullYear(),m=month.getMonth();$('monthLabel').textContent=month.toLocaleDateString(undefined,{month:'long',year:'numeric'});let dates=Object.keys(cur().days).filter(k=>{let d=parseDate(k);return d.getFullYear()===y&&d.getMonth()===m}).sort().reverse();$('history').innerHTML='';if(!dates.length){$('history').innerHTML='<div class="msg">No saved dates for this month.</div>';return}dates.forEach(date=>{let r=cur().days[date],d=parseDate(date),card=document.createElement('div');card.className='daycard';card.innerHTML=`<div class="daydate"><b>${d.getDate()}</b><small>${weekday(d).slice(0,3)}</small></div><div class="daybox"><b>${date}</b><div class="help">${r.type==='holiday'?'University holiday':r.type==='saturday_working'?'Replacement working day':''}</div><div class="tiles">${(r.sessions||[]).map(s=>`<div class="tile ${s.status==='P'?'p':s.status==='A'?'a':'n'}">${s.status==='P'?'P':s.status==='A'?'A':s.status==='N'?'NH':'—'}<small>P${s.period}</small></div>`).join('')}</div><button class="btn" data-edit="${date}" style="margin-top:8px">Edit date</button></div>`;$('history').append(card)});document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{$('entryDate').value=b.dataset.edit;renderEntry();document.querySelector('[data-page="entry"]').click()})}
-function renderAll(){renderSem();renderSubjects();renderSettings();renderEntry();renderReport();renderHistory()}
-document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));$(b.dataset.page+'Page').classList.remove('hidden')});
-$('loginBtn').onclick=()=>auth('login');$('signupBtn').onclick=()=>auth('signup');$('logoutBtn').onclick=logout;
-$('entryDate').value=todayKey();$('entryDate').onchange=()=>renderEntry();$('dayType').onchange=()=>renderEntry($('dayType').value);$('saveDay').onclick=saveDay;$('allP').onclick=()=>markAll('P');$('allA').onclick=()=>markAll('A');$('allN').onclick=()=>markAll('N');
-$('addSubject').onclick=async()=>{let name=$('newSubject').value.trim(),code=$('newCode').value.trim();if(!name)return alert('Enter subject name.');if(cur().subjects.some(s=>key(s.name,s.code)===key(name,code)))return alert('Subject already exists.');cur().subjects.push({name,code});$('newSubject').value='';$('newCode').value='';await persist();renderAll()};
-$('loadSem1').onclick=async()=>{if(cur().subjects.length&&!confirm('Replace this semester subject list?'))return;seed(cur());await persist();renderAll()};
-$('saveSettings').onclick=async()=>{cur().target=Math.max(1,Math.min(100,Number($('targetInput').value)||75));cur().replacement=$('replacement').value;cur().start=$('semStart').value;cur().end=$('semEnd').value;await persist();renderAll()};
-$('saveBaseline').onclick=saveBaseline;$('prevMonth').onclick=()=>{month.setMonth(month.getMonth()-1);renderHistory()};$('nextMonth').onclick=()=>{month.setMonth(month.getMonth()+1);renderHistory()};
-$('export').onclick=()=>{let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.download='jilan-attendance-backup.json';a.click();URL.revokeObjectURL(a.href)};
-$('importFile').onchange=async e=>{try{data=normalize(JSON.parse(await e.target.files[0].text()));await persist();renderAll();alert('Backup imported')}catch{alert('Could not import backup')}};
-async function start(){try{sb.auth.onAuthStateChange(async(_,session)=>{if(session?.user&&!user){user=session.user;await openApp()}});let {data:r}=await sb.auth.getSession();if(r.session){user=r.session.user;await openApp()}}catch(e){authMessage('Supabase error: '+e.message)}}
-start();
+
+const extra = {
+  "Library":"OPTIONAL",
+  "Mentoring":"OPTIONAL",
+  "Counselling":"OPTIONAL",
+  "Maths Lab":"OPTIONAL",
+  "English Lab":"OPTIONAL"
+};
+
+const $ = id => document.getElementById(id);
+let user = null;
+let data = {semesters:{}};
+let currentSessions = [];
+
+function todayKey(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function say(message,error=false){
+  $("message").textContent = message;
+  $("message").className = error ? "err" : "ok";
+  $("message").classList.remove("hidden");
+}
+function hideMessage(){ $("message").classList.add("hidden"); }
+function semData(){
+  const s = $("semester").value;
+  if(!data.semesters[s]) data.semesters[s] = {dates:{}};
+  if(!data.semesters[s].dates) data.semesters[s].dates = {};
+  return data.semesters[s].dates;
+}
+function dayName(date){
+  return new Date(date+"T12:00:00").toLocaleDateString("en-US",{weekday:"long"});
+}
+function scheduleFor(date,type,weekday){
+  if(type==="holiday") return [];
+  const day = type==="saturday" ? weekday : dayName(date);
+  return (timetable[day]||[]).map((name,i)=>({
+    id:`${day}-${i}`,
+    name,
+    status:extra[name] ? "Not Held" : "Not Held"
+  }));
+}
+function selectedDay(){
+  return semData()[$("date").value] || null;
+}
+function renderEntry(){
+  hideMessage();
+  const date = $("date").value;
+  if(!date) return;
+  const type = $("daytype").value;
+  const old = selectedDay();
+  const weekday = $("replacementDay")?.value || "Monday";
+
+  if(type==="holiday"){
+    currentSessions = [];
+  } else if(old && old.type===type && old.sessions){
+    currentSessions = old.sessions.map(x=>({...x}));
+  } else {
+    currentSessions = scheduleFor(date,type,weekday);
+  }
+
+  $("dayinfo").textContent = type==="holiday"
+    ? "Holiday selected. No sessions will be counted."
+    : `Timetable for ${type==="saturday" ? weekday+" replacement Saturday" : dayName(date)}. Mark each period below.`;
+
+  const container = $("sessions");
+  container.innerHTML = "";
+
+  if(type==="saturday"){
+    const wrap = document.createElement("div");
+    wrap.innerHTML = '<label for="replacementDay">Which weekday timetable applies?</label><select id="replacementDay"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option></select>';
+    container.appendChild(wrap);
+    $("replacementDay").value = old?.weekday || "Monday";
+    $("replacementDay").onchange = () => {
+      const chosen = $("replacementDay").value;
+      currentSessions = scheduleFor(date,"saturday",chosen);
+      drawSessions();
+    };
+  }
+  drawSessions();
+}
+function drawSessions(){
+  const container = $("sessions");
+  container.querySelectorAll(".subject").forEach(el=>el.remove());
+  if($("daytype").value==="holiday") return;
+
+  currentSessions.forEach((session,index)=>{
+    const card = document.createElement("div");
+    card.className = "subject";
+    const title = document.createElement("div");
+    title.className = "subject-head";
+    title.textContent = `Period ${index+1} · ${session.name}`;
+    card.appendChild(title);
+
+    const choices = document.createElement("div");
+    choices.className = "pills";
+    ["Present","Absent","Not Held"].forEach(status=>{
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = status;
+      b.className = "secondary"+(session.status===status ? " chosen":"");
+      b.onclick = ()=>{
+        currentSessions[index].status = status;
+        choices.querySelectorAll("button").forEach(btn=>btn.classList.remove("chosen"));
+        b.classList.add("chosen");
+      };
+      choices.appendChild(b);
+    });
+    card.appendChild(choices);
+    container.appendChild(card);
+  });
+}
+
+async function loadData(){
+  const {data:row,error} = await supabase
+    .from("attendance_data")
+    .select("payload")
+    .eq("user_id",user.id)
+    .maybeSingle();
+
+  if(error) throw error;
+  data = row?.payload && typeof row.payload==="object"
+    ? row.payload : {semesters:{}};
+  if(!data.semesters) data.semesters = {};
+  if(!data.semesters[$("semester").value])
+    data.semesters[$("semester").value] = {dates:{}};
+  renderEntry();
+  renderReports();
+  renderSetup();
+}
+
+async function persist(){
+  if(!user) throw new Error("Please log in first.");
+  const {error} = await supabase.from("attendance_data").upsert({
+    user_id:user.id,
+    payload:data,
+    updated_at:new Date().toISOString()
+  },{onConflict:"user_id"});
+  if(error) throw error;
+}
+
+async function saveDay(){
+  const date = $("date").value;
+  if(!date) return say("Choose a date first.",true);
+  if(date===todayKey() && new Date().getHours()>=18)
+    return say("Today's attendance entry closes at 6:00 PM. You can still enter past dates.",true);
+
+  const type = $("daytype").value;
+  const weekday = $("replacementDay")?.value || null;
+  const dates = semData();
+
+  dates[date] = {
+    type,
+    weekday: type==="saturday" ? weekday : null,
+    sessions: type==="holiday" ? [] : currentSessions.map(s=>({...s}))
+  };
+
+  try{
+    await persist();
+    renderReports();
+    say("Attendance saved successfully.");
+  }catch(e){
+    say("Could not save attendance: "+(e.message||"Check Supabase configuration and RLS policies."),true);
+  }
+}
+
+function counts(sessions){
+  let conducted=0,present=0,absent=0;
+  sessions.forEach(s=>{
+    if(s.status==="Present"){conducted++;present++;}
+    else if(s.status==="Absent"){conducted++;absent++;}
+  });
+  return {conducted,present,absent,pct:conducted ? present/conducted*100 : null};
+}
+function allRecords(){
+  return Object.entries(semData()).sort(([a],[b])=>a.localeCompare(b));
+}
+function renderReports(){
+  const rows = {};
+  subjects.forEach(s=>rows[s.name]={...s,conducted:0,present:0,absent:0});
+
+  const records = allRecords();
+  records.forEach(([,day])=>{
+    if(day.type==="holiday") return;
+    (day.sessions||[]).forEach(session=>{
+      if(!rows[session.name]) return;
+      const r=rows[session.name];
+      if(session.status==="Present"){r.conducted++;r.present++;}
+      if(session.status==="Absent"){r.conducted++;r.absent++;}
+    });
+  });
+
+  const total = Object.values(rows).reduce((a,r)=>({
+    conducted:a.conducted+r.conducted,
+    present:a.present+r.present,
+    absent:a.absent+r.absent
+  }),{conducted:0,present:0,absent:0});
+
+  $("overallPct").textContent = total.conducted
+    ? (100*total.present/total.conducted).toFixed(1)+"%" : "—";
+  $("overallConducted").textContent=total.conducted;
+  $("overallPresent").textContent=total.present;
+  $("overallAbsent").textContent=total.absent;
+
+  $("reportRows").innerHTML=Object.values(rows).map(r=>{
+    const pct=r.conducted ? (100*r.present/r.conducted).toFixed(1)+"%" : "—";
+    return `<tr><td>${r.name}</td><td>${r.total}</td><td>${r.conducted}</td><td>${r.present}</td><td>${r.absent}</td><td>${pct}</td></tr>`;
+  }).join("");
+
+  $("dateRows").innerHTML=records.map(([date,day])=>{
+    const c=counts(day.sessions||[]);
+    return `<tr><td>${date}</td><td>${day.type==="saturday"?"Replacement Saturday":day.type}</td><td>${c.conducted}</td><td>${c.present}</td><td>${c.absent}</td></tr>`;
+  }).join("") || '<tr><td colspan="5">No attendance records saved yet.</td></tr>';
+}
+function renderSetup(){
+  $("setupRows").innerHTML=subjects.map(s=>
+    `<tr><td>${s.name}</td><td>${s.code}</td><td>${s.total}</td></tr>`
+  ).join("");
+}
+function showTab(tab){
+  ["entry","reports","setup"].forEach(name=>{
+    $(name).classList.toggle("hidden",name!==tab);
+    document.querySelector(`[data-tab="${name}"]`).className=name===tab?"":"secondary";
+  });
+  if(tab==="reports") renderReports();
+  if(tab==="setup") renderSetup();
+}
+function openApp(currentUser){
+  user=currentUser;
+  $("auth").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  $("date").value=todayKey();
+  renderSetup();
+  loadData().catch(e=>say("Could not load attendance: "+e.message,true));
+}
+
+$("login").onclick=async()=>{
+  hideMessage();
+  const email=$("email").value.trim(),password=$("password").value;
+  if(!email||!password) return say("Enter your email and password.",true);
+  const {data:result,error}=await supabase.auth.signInWithPassword({email,password});
+  if(error) return say(error.message,true);
+  openApp(result.user);
+};
+$("signup").onclick=async()=>{
+  hideMessage();
+  const email=$("email").value.trim(),password=$("password").value;
+  if(!email||!password) return say("Enter your email and password.",true);
+  if(password.length<6) return say("Password must contain at least 6 characters.",true);
+  const {data:result,error}=await supabase.auth.signUp({email,password});
+  if(error) return say(error.message,true);
+  if(result.user && result.session) openApp(result.user);
+  else say("Account created. If email confirmation is enabled, confirm your email before logging in.");
+};
+$("logout").onclick=async()=>{
+  const {error}=await supabase.auth.signOut();
+  if(error) say(error.message,true);
+  $("app").classList.add("hidden");
+  $("auth").classList.remove("hidden");
+  user=null;
+};
+$("save").onclick=saveDay;
+$("clearDay").onclick=()=>{
+  const date=$("date").value;
+  if(!date) return;
+  delete semData()[date];
+  persist().then(()=>{
+    renderEntry();renderReports();say("Saved record for this date cleared.");
+  }).catch(e=>say("Could not clear date: "+e.message,true));
+};
+$("date").onchange=()=>{
+  const saved=selectedDay();
+  $("daytype").value=saved?.type||"working";
+  renderEntry();
+};
+$("daytype").onchange=renderEntry;
+$("semester").onchange=()=>{
+  loadData().catch(e=>say("Could not load semester: "+e.message,true));
+};
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+$("refresh").onclick=()=>{renderReports();renderSetup();say("Reports refreshed.");};
+
+const {data:{session},error:sessionError}=await supabase.auth.getSession();
+if(sessionError) say(sessionError.message,true);
+if(session?.user) openApp(session.user);
 </script>
 </body>
 </html>
