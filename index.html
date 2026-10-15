@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Semester Attendance Manager</title>
+<style>
+:root{color-scheme:dark;--bg:#0a1020;--panel:#141d32;--panel2:#1d2944;--text:#edf3ff;--muted:#aab8d4;--line:#30405f;--accent:#8db0ff;--good:#68d9a5;--bad:#ff8585;--warn:#ffd479}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#091020,#111a2e);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}main{max-width:1120px;margin:auto;padding:20px 14px 48px}h1{font-size:clamp(1.6rem,4vw,2.2rem);margin:0}h2{font-size:1.12rem;margin:0 0 12px}h3{font-size:1rem;margin:0 0 8px}.muted,.help{color:var(--muted)}.help{font-size:.88rem}.sub{margin:5px 0 18px;color:var(--muted)}
+.panel{background:rgba(20,29,50,.97);border:1px solid var(--line);border-radius:16px;padding:16px;margin:13px 0;box-shadow:0 8px 24px #0002}
+.semesters{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:7px}.sem,.navbtn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 6px;border-radius:10px;cursor:pointer}.sem.active,.navbtn.active{background:var(--accent);color:#091328;border-color:var(--accent);font-weight:800}
+.nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}.navbtn{font-weight:700;padding:13px}.page{display:none}.page.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.field label{display:block;color:var(--muted);font-size:.88rem;margin-bottom:5px}.field input,.field select,.toolbar input,.toolbar select,input,select{font:inherit}.field input,.field select,.toolbar input,.toolbar select{width:100%;padding:9px;border:1px solid var(--line);border-radius:9px;background:#0d1629;color:var(--text)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:11px 0}.toolbar input,.toolbar select{width:auto;max-width:100%}
+.primary,.secondary,.danger,.filelabel{font:inherit;font-weight:700;border-radius:10px;padding:9px 13px;cursor:pointer}.primary{background:var(--accent);border:0;color:#081328}.secondary,.filelabel{background:var(--panel2);border:1px solid var(--line);color:var(--text)}.danger{background:transparent;border:1px solid #79434d;color:var(--bad)}
+.subject-add{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.subject-list{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.chip{display:inline-flex;gap:8px;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:6px 10px}.chip button{background:none;border:0;color:var(--bad);cursor:pointer;font-weight:900}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.stat{background:var(--panel2);border-radius:12px;padding:12px}.stat small{display:block;color:var(--muted)}.stat strong{font-size:1.4rem;display:block;margin:4px 0}.good{color:var(--good)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:left;padding:9px 7px;border-bottom:1px solid var(--line)}th{font-size:.83rem;color:var(--muted);font-weight:600}
+.hourlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.hour{display:grid;grid-template-columns:58px minmax(0,1.3fr) minmax(0,1fr);gap:7px;align-items:center;background:#0d1629;border:1px solid var(--line);border-radius:10px;padding:8px}.hour select{width:100%;min-width:0;padding:8px;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px}
+.notice{border:1px solid #66582e;background:#2b2619;color:#ffe2a1;padding:10px 12px;border-radius:10px;font-size:.9rem}.empty{color:var(--muted);padding:12px 0}.pill{display:inline-block;padding:3px 8px;border-radius:999px;font-size:.82rem;font-weight:700}.pill.good{background:#153a30}.pill.bad{background:#48232c}.pill.warn{background:#44371b}
+progress{width:100%;height:9px;accent-color:var(--good)}
+@media(max-width:700px){.grid{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.hourlist{grid-template-columns:1fr}.semesters{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:430px){.grid{grid-template-columns:1fr}.hour{grid-template-columns:48px minmax(0,1.2fr) minmax(0,1fr);gap:5px;padding:6px}.hour select{font-size:.85rem;padding:7px}.panel{padding:12px}}
+</style></head>
+<body><main>
+<header><h1>Semester Attendance Manager</h1><p class="sub">8 semesters · subject-wise attendance · holidays · Saturday working-day adjustments</p></header>
+<section class="panel"><h2>Select semester</h2><div id="semesters" class="semesters"></div></section>
+<nav class="nav"><button class="navbtn active" data-page="entry">1. Attendance entry by date</button><button class="navbtn" data-page="report">2. Overall & subject-wise report</button></nav>
+
+<section id="entryPage" class="page active">
+ <section class="panel"><h2>Set up subjects for this semester</h2><p class="help">Add the subjects you chose at the start of the semester. They will appear in the subject dropdown for every hour. No fixed daily timetable is needed.</p>
+  <div class="subject-add"><input id="subjectName" placeholder="Subject name (e.g. Engineering Maths)"><button id="addSubject" class="primary">Add subject</button></div><div id="subjectList" class="subject-list"></div>
+ </section>
+ <section class="panel"><h2>Attendance entry by date</h2>
+  <div class="grid">
+   <div class="field"><label for="entryDate">Date</label><input id="entryDate" type="date"></div>
+   <div class="field"><label for="dayType">Day type</label><select id="dayType"><option value="normal">Normal working day</option><option value="holiday">University / declared holiday</option><option value="saturday_working">Saturday working day (WD timetable)</option></select></div>
+   <div class="field"><label for="sessions">Sessions / hours for this date</label><input id="sessions" type="number" min="1" max="16" value="7"></div>
+  </div>
+  <p id="dayHint" class="help">Saturday and Sunday are holidays by default. If a weekday is declared a holiday, mark it as a holiday and mark the Saturday that replaces it as a working day.</p>
+  <div id="holidayNotice" class="notice" hidden></div>
+  <div id="hourList" class="hourlist"></div>
+  <div class="toolbar"><button id="saveDay" class="primary">Save day</button><button id="allPresent" class="secondary">Mark all present</button><button id="allAbsent" class="secondary">Mark all absent</button><button id="markHoliday" class="secondary">Save as holiday (no sessions)</button></div>
+  <p class="help">A declared holiday has zero conducted sessions and is excluded from the attendance denominator. A normal day not entered by 6 PM is marked absent for all configured sessions when you next open the site. Weekends are holidays unless you explicitly set a Saturday as working.</p>
+ </section>
+ <section class="panel"><h2>Recent dates</h2><div class="toolbar"><button id="prevMonth" class="secondary">← Previous month</button><strong id="monthLabel"></strong><button id="nextMonth" class="secondary">Next month →</button></div>
+  <div class="tablewrap"><table><thead><tr><th>Date</th><th>Type</th><th>Conducted</th><th>Present</th><th>Absent</th><th></th></tr></thead><tbody id="history"></tbody></table></div>
+ </section>
+</section>
+
+<section id="reportPage" class="page">
+ <section class="panel"><h2 id="reportTitle">Semester 1 attendance summary</h2>
+  <div class="stats">
+   <div class="stat"><small>Overall percentage</small><strong id="overallPct">0%</strong><progress id="progress" max="100" value="0"></progress></div>
+   <div class="stat"><small>Total sessions conducted</small><strong id="totalConducted">0</strong></div>
+   <div class="stat"><small>Sessions attended / present</small><strong id="totalPresent">0</strong></div>
+   <div class="stat"><small>Sessions absent</small><strong id="totalAbsent">0</strong></div>
+  </div><p id="eligibility" class="help"></p>
+  <p class="help">Formula: attended ÷ conducted × 100. Eligible means 75% or above. Holidays are not counted as conducted sessions.</p>
+ </section>
+ <section class="panel"><h2>Subject-wise attendance</h2><div class="tablewrap"><table><thead><tr><th>Subject</th><th>Total sessions</th><th>Conducted</th><th>Attended</th><th>Absent</th><th>Present %</th><th>Eligibility</th></tr></thead><tbody id="subjectReport"></tbody></table></div></section>
+ <section class="panel"><h2>Calendar & semester settings</h2><div class="grid">
+  <div class="field"><label for="target">Required attendance (%)</label><input id="target" type="number" min="1" max="100" value="75"></div>
+  <div class="field"><label for="defaultSessions">Default sessions per working day</label><input id="defaultSessions" type="number" min="1" max="16" value="7"></div>
+  <div class="field"><label for="cutoff">Entry cutoff</label><input id="cutoff" type="time" value="18:00"></div>
+  <div class="field"><label for="semesterStart">Semester start date</label><input id="semesterStart" type="date"></div>
+  <div class="field"><label for="semesterEnd">Semester end date</label><input id="semesterEnd" type="date"></div>
+  <div class="field"><label>Default weekend rule</label><input value="Saturday & Sunday = holiday" disabled></div>
+ </div>
+ <div class="toolbar"><button id="saveSettings" class="primary">Save settings</button><button id="export" class="secondary">Export JSON backup</button><button id="csv" class="secondary">Download CSV</button><label class="filelabel" for="importFile">Import backup</label><input id="importFile" type="file" accept="application/json" hidden></div>
+ <p class="help">When a weekday holiday is replaced by a working Saturday, mark the weekday as a holiday and the Saturday as “Saturday working day (WD timetable)”. The app records attendance per date and does not assume that the weekday's subject timetable automatically transfers; select the actual subjects for the Saturday's sessions.</p>
+ </section>
+</section>
+<footer class="help">Data is stored in this browser only; it does not sync automatically across devices. Export backups regularly. This is a personal tracker, not an official college attendance record.</footer>
+</main>
+<script>
+const KEY='semesterAttendanceManager_v3',TARGET_DEFAULT=75;
+const $=id=>document.getElementById(id),DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function fresh(){return {target:75,defaultSessions:7,cutoff:'18:00',start:'',end:'',subjects:[],days:{}}}
+function load(){try{let d=JSON.parse(localStorage.getItem(KEY));if(d?.semesters?.length===8)return d}catch(e){}return {semesters:Array.from({length:8},fresh)}}
+let data=load(),sem=0,month=new Date();month.setDate(1);
+function c(){return data.semesters[sem]}function persist(){localStorage.setItem(KEY,JSON.stringify(data))}
+function dk(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function dateObj(s){let [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
+function esc(s){return String(s).replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]))}
+function isWeekend(date){let n=dateObj(date).getDay();return n===0||n===6}
+function recCounts(r){if(!r||r.type==='holiday')return {p:0,a:0,t:0};let vals=Object.values(r.hours||{});return {p:vals.filter(h=>h.status==='P').length,a:vals.filter(h=>h.status==='A').length,t:vals.filter(h=>h.status==='P'||h.status==='A').length}}
+function overall(){let p=0,a=0,t=0;Object.values(c().days).forEach(r=>{if(r.type==='holiday')return;let n=recCounts(r);p+=n.p;a+=n.a;t+=n.t;if(r.auto){let missing=Math.max(0,Number(r.sessions||c().defaultSessions)-n.t);a+=missing;t+=missing}});return {p,a,t}}
+function percent(p,t){return t?100*p/t:0}
+function eligible(p,t,target){return t>0&&percent(p,t)>=Number(target)}
+function missable(p,a,target){let q=Number(target)/100;if(q>=1)return 0;return Math.max(0,Math.floor(p/q-(p+a)+1e-9))}
+function renderSem(){let root=$('semesters');root.innerHTML='';for(let i=0;i<8;i++){let b=document.createElement('button');b.className='sem'+(i===sem?' active':'');b.textContent=`Sem ${i+1}`;b.onclick=()=>{sem=i;renderAll()};root.appendChild(b)}}
+function renderNav(){document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x===b));$('entryPage').classList.toggle('active',b.dataset.page==='entry');$('reportPage').classList.toggle('active',b.dataset.page==='report');renderAll()})}
+function renderSubjects(){let x=c();$('subjectList').innerHTML='';if(!x.subjects.length){$('subjectList').innerHTML='<span class="help">No subjects added. Add your semester subjects here.</span>';return}x.subjects.forEach((s,i)=>{let chip=document.createElement('span');chip.className='chip';chip.textContent=s;let b=document.createElement('button');b.textContent='×';b.title='Remove subject';b.onclick=()=>{if(confirm(`Remove "${s}" from this semester? Existing entries remain saved.`)){x.subjects.splice(i,1);persist();renderAll()}};chip.appendChild(b);$('subjectList').appendChild(chip)})}
+function renderSettings(){let x=c();$('target').value=x.target;$('defaultSessions').value=x.defaultSessions;$('cutoff').value=x.cutoff;$('semesterStart').value=x.start;$('semesterEnd').value=x.end}
+function renderDay(){let date=$('entryDate').value||dk(new Date());$('entryDate').value=date;let x=c(),r=x.days[date],dateD=dateObj(date),weekend=isWeekend(date);$('dayType').value=r?.type||(weekend?'holiday':'normal');$('sessions').value=r?.sessions??x.defaultSessions;
+$('holidayNotice').hidden=true;if(weekend&&!r){$('holidayNotice').hidden=false;$('holidayNotice').textContent='Saturday/Sunday defaults to holiday. If this Saturday is a replacement working day, choose “Saturday working day (WD timetable)”.'}
+let type=$('dayType').value,holiday=type==='holiday';$('sessions').disabled=holiday;$('hourList').innerHTML='';
+if(holiday){$('hourList').innerHTML='<p class="help">Holiday: no sessions will be counted as conducted.</p>';$('dayStatus');return}
+let num=Math.max(1,Math.min(16,Number($('sessions').value)||x.defaultSessions));
+for(let i=0;i<num;i++){let old=r?.hours?.[i]||{},div=document.createElement('div');div.className='hour';let lab=document.createElement('strong');lab.textContent=`Session ${i+1}`;let subj=document.createElement('select');subj.dataset.subject=i;subj.innerHTML='<option value="">Choose subject</option>'+x.subjects.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');subj.value=old.subject||'';let status=document.createElement('select');status.dataset.status=i;status.innerHTML='<option value="">Not entered</option><option value="P">Present</option><option value="A">Absent</option>';status.value=old.status||'';div.append(lab,subj,status);$('hourList').appendChild(div)}
+}
+function saveDay(){let date=$('entryDate').value;if(!date)return;let x=c(),type=$('dayType').value;if(type==='holiday'){x.days[date]={type:'holiday',sessions:0,hours:{},auto:false,updated:new Date().toISOString()};persist();renderAll();alert('Holiday saved. It will not count as conducted sessions.');return}
+let num=Math.max(1,Math.min(16,Number($('sessions').value)||x.defaultSessions)),hours={},chosen=0;
+for(let i=0;i<num;i++){let subject=document.querySelector(`[data-subject="${i}"]`)?.value||'',status=document.querySelector(`[data-status="${i}"]`)?.value||'';if(status){chosen++;hours[i]={subject:subject||'Unassigned',status}}}
+if(!chosen){alert('Choose Present or Absent for at least one session, or save the date as a holiday.');return}
+x.days[date]={type,sessions:num,hours,auto:false,updated:new Date().toISOString()};persist();renderAll();alert('Attendance saved.')}
+function markHoliday(){ $('dayType').value='holiday';renderDay();saveDay()}
+function autoMark(){let x=c(),now=new Date();if(!x.start)return;let start=dateObj(x.start),end=x.end?dateObj(x.end):now;for(let d=new Date(start);d<=end&&d<=now;d.setDate(d.getDate()+1)){let date=dk(d);if(x.days[date])continue;let wd=d.getDay();if(wd===0||wd===6)continue;if(date===dk(now)&&now.toTimeString().slice(0,5)<(x.cutoff||'18:00'))continue;let hrs={};for(let i=0;i<Number(x.defaultSessions);i++)hrs[i]={subject:'Unassigned',status:'A'};x.days[date]={type:'normal',sessions:Number(x.defaultSessions),hours:hrs,auto:true,updated:new Date().toISOString()}}persist()}
+function renderOverall(){let x=c(),n=overall(),p=percent(n.p,n.t);$('reportTitle').textContent=`Semester ${sem+1} attendance summary`;$('overallPct').textContent=p.toFixed(2)+'%';$('progress').value=p;$('totalConducted').textContent=n.t;$('totalPresent').textContent=n.p;$('totalAbsent').textContent=n.a;let ok=eligible(n.p,n.t,x.target);$('eligibility').innerHTML=n.t?`<span class="pill ${ok?'good':'bad'}">${ok?'ELIGIBLE':'NOT ELIGIBLE'}</span> &nbsp; Required: ${x.target}%. ${ok?`You can miss approximately ${missable(n.p,n.a,x.target)} more session(s) and remain at target.`:'Attend upcoming sessions to improve your percentage.'}`:`No conducted sessions recorded yet. Required attendance: ${x.target}%.`}
+function renderSubjectReport(){let x=c(),rows=[];$('subjectReport').innerHTML='';x.subjects.forEach(s=>{let p=0,a=0,total=0;Object.values(x.days).forEach(r=>{if(r.type==='holiday')return;Object.values(r.hours||{}).forEach(h=>{if(h.subject===s&&(h.status==='P'||h.status==='A')){total++;if(h.status==='P')p++;else a++}})});rows.push({s,p,a,total})});if(!rows.length){$('subjectReport').innerHTML='<tr><td colspan="7" class="empty">Add your subjects in Attendance entry by date.</td></tr>';return}
+rows.forEach(r=>{let tr=document.createElement('tr'),pc=percent(r.p,r.total),ok=eligible(r.p,r.total,c().target);tr.innerHTML=`<td>${esc(r.s)}</td><td>${r.total}</td><td>${r.total}</td><td>${r.p}</td><td>${r.a}</td><td>${r.total?pc.toFixed(2)+'%':'—'}</td><td>${r.total?`<span class="pill ${ok?'good':'bad'}">${ok?'ELIGIBLE':'NOT ELIGIBLE'}</span>`:'—'}</td>`;$('subjectReport').appendChild(tr)})}
+function renderHistory(){let x=c(),y=month.getFullYear(),m=month.getMonth();$('monthLabel').textContent=month.toLocaleDateString(undefined,{month:'long',year:'numeric'});let rows=Object.entries(x.days).filter(([k])=>{let d=dateObj(k);return d.getFullYear()===y&&d.getMonth()===m}).sort((a,b)=>b[0].localeCompare(a[0]));$('history').innerHTML='';if(!rows.length){$('history').innerHTML='<tr><td colspan="6" class="empty">No saved dates for this month.</td></tr>';return}
+rows.forEach(([k,r])=>{let n=recCounts(r),tr=document.createElement('tr');tr.innerHTML=`<td>${k}</td><td>${r.type==='holiday'?'Holiday':r.type==='saturday_working'?'Saturday WD':r.auto?'Auto-absent':'Working day'}</td><td>${r.type==='holiday'?0:(r.sessions??x.defaultSessions)}</td><td>${n.p}</td><td>${r.type==='holiday'?0:(r.auto?Math.max(n.a,Number(r.sessions||x.defaultSessions)-n.p):n.a)}</td><td><button class="secondary" data-edit="${k}">Edit</button></td>`;$('history').appendChild(tr)});document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{$('entryDate').value=b.dataset.edit;renderDay();$('entryPage').scrollIntoView({behavior:'smooth'})})}
+function renderAll(){renderSem();renderSubjects();renderSettings();renderDay();renderOverall();renderSubjectReport();renderHistory()}
+$('addSubject').onclick=()=>{let s=$('subjectName').value.trim();if(!s)return;if(c().subjects.some(x=>x.toLowerCase()===s.toLowerCase())){alert('Subject already exists.');return}c().subjects.push(s);$('subjectName').value='';persist();renderAll()};$('subjectName').addEventListener('keydown',e=>{if(e.key==='Enter')$('addSubject').click()});
+$('dayType').onchange=renderDay;$('sessions').onchange=renderDay;$('entryDate').onchange=renderDay;
+$('allPresent').onclick=()=>document.querySelectorAll('[data-status]').forEach(s=>s.value='P');$('allAbsent').onclick=()=>document.querySelectorAll('[data-status]').forEach(s=>s.value='A');$('saveDay').onclick=saveDay;$('markHoliday').onclick=markHoliday;
+$('saveSettings').onclick=()=>{let x=c();x.target=Math.max(1,Math.min(100,Number($('target').value)||75));x.defaultSessions=Math.max(1,Math.min(16,Number($('defaultSessions').value)||7));x.cutoff=$('cutoff').value||'18:00';x.start=$('semesterStart').value;x.end=$('semesterEnd').value;persist();autoMark();renderAll();alert('Semester settings saved.')};
+$('prevMonth').onclick=()=>{month.setMonth(month.getMonth()-1);renderHistory()};$('nextMonth').onclick=()=>{month.setMonth(month.getMonth()+1);renderHistory()};
+function download(name,content,type){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+$('export').onclick=()=>download('attendance-backup.json',JSON.stringify(data,null,2),'application/json');
+$('csv').onclick=()=>{let rows=[['Semester','Date','Day type','Session','Subject','Status','Auto absent']];data.semesters.forEach((x,i)=>Object.entries(x.days).forEach(([date,r])=>{if(r.type==='holiday')rows.push([i+1,date,'Holiday','','','','no']);else Object.entries(r.hours||{}).forEach(([h,v])=>rows.push([i+1,date,r.type,Number(h)+1,v.subject||'Unassigned',v.status,r.auto?'yes':'no']))}));download('attendance.csv',rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\n'),'text/csv')};
+$('importFile').onchange=async e=>{try{let z=JSON.parse(await e.target.files[0].text());if(z.semesters?.length!==8)throw Error();data=z;persist();renderAll();alert('Backup imported.')}catch(err){alert('Could not import backup. Choose a valid JSON backup.')}e.target.value=''};
+$('entryDate').value=dk(new Date());renderNav();autoMark();renderAll();
+</script></body></html>
