@@ -1,0 +1,1223 @@
+{
+  "semester": {
+    "start": "2026-08-10",
+    "end": "2026-11-30"
+  },
+  "subjects": [
+    {
+      "name": "Maths",
+      "total": 75
+    },
+    {
+      "name": "Chemistry",
+      "total": 45
+    },
+    {
+      "name": "Chemistry Lab",
+      "total": 30
+    },
+    {
+      "name": "PSC",
+      "total": 45
+    },
+    {
+      "name": "PSC Lab",
+      "total": 30
+    },
+    {
+      "name": "Biology",
+      "total": 15
+    },
+    {
+      "name": "English",
+      "total": 45
+    },
+    {
+      "name": "DT",
+      "total": 50
+    },
+    {
+      "name": "ES",
+      "total": 50
+    },
+    {
+      "name": "IE",
+      "total": 45
+    }
+  ],
+  "days": {
+    "2026-08-10": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "DT",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "PSC",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "Chemistry",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "Chemistry",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-08-11": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Maths",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "DT",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "PSC",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "ES",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "ES",
+          "status": "P"
+        },
+        {
+          "period": 6,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "DT",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-08-12": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "IE",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "PSC Lab",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "PSC Lab",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "PSC",
+          "status": "P"
+        },
+        {
+          "period": 6,
+          "subject": "Maths",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "Maths",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-08-13": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Chemistry",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "IE",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "Maths",
+          "status": "P"
+        },
+        {
+          "period": 6,
+          "subject": "Biology",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "ES",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-08-14": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Maths",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "IE",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "Chemistry Lab",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "Chemistry Lab",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "PSC",
+          "status": "A"
+        },
+        {
+          "period": 6,
+          "subject": "Chemistry",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "IE",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-08-17": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "DT",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "PSC",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "Chemistry",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "Chemistry",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-08-18": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Maths",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "DT",
+          "status": "A"
+        },
+        {
+          "period": 3,
+          "subject": "PSC",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "ES",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "ES",
+          "status": "P"
+        },
+        {
+          "period": 6,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "DT",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-08-19": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "IE",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "PSC Lab",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "PSC Lab",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "PSC",
+          "status": "P"
+        },
+        {
+          "period": 6,
+          "subject": "Maths",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "Maths",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-08-20": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Chemistry",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "IE",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "Maths",
+          "status": "P"
+        },
+        {
+          "period": 6,
+          "subject": "Biology",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "ES",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-08-21": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Maths",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "IE",
+          "status": "A"
+        },
+        {
+          "period": 3,
+          "subject": "Chemistry Lab",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "Chemistry Lab",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "PSC",
+          "status": "P"
+        },
+        {
+          "period": 6,
+          "subject": "Chemistry",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "IE",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-08-22": {
+      "type": "saturday_working",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "IE",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "PSC Lab",
+          "status": "A"
+        },
+        {
+          "period": 4,
+          "subject": "PSC Lab",
+          "status": "A"
+        },
+        {
+          "period": 5,
+          "subject": "PSC",
+          "status": "A"
+        },
+        {
+          "period": 6,
+          "subject": "Maths",
+          "status": "A"
+        },
+        {
+          "period": 7,
+          "subject": "Maths",
+          "status": "A"
+        }
+      ]
+    },
+    "2026-08-24": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "DT",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "PSC",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "Chemistry",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "Chemistry",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-08-25": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Maths",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "DT",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "PSC",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "ES",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "ES",
+          "status": "P"
+        },
+        {
+          "period": 6,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "DT",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-08-26": {
+      "type": "holiday",
+      "sessions": []
+    },
+    "2026-08-27": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Chemistry",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "IE",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "Maths",
+          "status": "P"
+        },
+        {
+          "period": 6,
+          "subject": "Biology",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "ES",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-08-28": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Maths",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "IE",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "Chemistry Lab",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "Chemistry Lab",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "PSC",
+          "status": "P"
+        },
+        {
+          "period": 6,
+          "subject": "Chemistry",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "IE",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-08-29": {
+      "type": "saturday_working",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Chemistry",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "IE",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "Maths",
+          "status": "P"
+        },
+        {
+          "period": 6,
+          "subject": "Biology",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "ES",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-08-30": {
+      "type": "holiday",
+      "sessions": []
+    },
+    "2026-08-31": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "DT",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "PSC",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "Chemistry",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "Chemistry",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-09-01": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Maths",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "DT",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "PSC",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "ES",
+          "status": "A"
+        },
+        {
+          "period": 5,
+          "subject": "ES",
+          "status": "P"
+        },
+        {
+          "period": 6,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "DT",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-09-02": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "IE",
+          "status": "A"
+        },
+        {
+          "period": 3,
+          "subject": "PSC Lab",
+          "status": "A"
+        },
+        {
+          "period": 4,
+          "subject": "PSC Lab",
+          "status": "A"
+        },
+        {
+          "period": 5,
+          "subject": "PSC",
+          "status": "A"
+        },
+        {
+          "period": 6,
+          "subject": "Maths",
+          "status": "A"
+        },
+        {
+          "period": 7,
+          "subject": "Maths",
+          "status": "A"
+        }
+      ]
+    },
+    "2026-09-03": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Chemistry",
+          "status": "A"
+        },
+        {
+          "period": 2,
+          "subject": "IE",
+          "status": "A"
+        },
+        {
+          "period": 3,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "Maths",
+          "status": "A"
+        },
+        {
+          "period": 6,
+          "subject": "Biology",
+          "status": "A"
+        },
+        {
+          "period": 7,
+          "subject": "ES",
+          "status": "A"
+        }
+      ]
+    },
+    "2026-09-04": {
+      "type": "holiday",
+      "sessions": []
+    },
+    "2026-09-05": {
+      "type": "holiday",
+      "sessions": []
+    },
+    "2026-09-06": {
+      "type": "holiday",
+      "sessions": []
+    },
+    "2026-09-07": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "DT",
+          "status": "A"
+        },
+        {
+          "period": 2,
+          "subject": "PSC",
+          "status": "A"
+        },
+        {
+          "period": 3,
+          "subject": "Chemistry",
+          "status": "A"
+        },
+        {
+          "period": 4,
+          "subject": "English",
+          "status": "A"
+        },
+        {
+          "period": 7,
+          "subject": "Chemistry",
+          "status": "A"
+        }
+      ]
+    },
+    "2026-09-08": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Maths",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "DT",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "PSC",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "ES",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "ES",
+          "status": "P"
+        },
+        {
+          "period": 6,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "DT",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-09-09": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "IE",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "PSC Lab",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "PSC Lab",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "PSC",
+          "status": "P"
+        },
+        {
+          "period": 6,
+          "subject": "Maths",
+          "status": "P"
+        },
+        {
+          "period": 7,
+          "subject": "Maths",
+          "status": "P"
+        }
+      ]
+    },
+    "2026-10-13": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Maths",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "DT",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "PSC",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "ES",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "ES",
+          "status": "A"
+        },
+        {
+          "period": 6,
+          "subject": "English",
+          "status": "A"
+        },
+        {
+          "period": 7,
+          "subject": "DT",
+          "status": "A"
+        }
+      ]
+    },
+    "2026-10-14": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "IE",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "PSC Lab",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "PSC Lab",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "PSC",
+          "status": "P"
+        },
+        {
+          "period": 6,
+          "subject": "Maths",
+          "status": "A"
+        },
+        {
+          "period": 7,
+          "subject": "Maths",
+          "status": "A"
+        }
+      ]
+    },
+    "2026-10-15": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Chemistry",
+          "status": "P"
+        },
+        {
+          "period": 2,
+          "subject": "IE",
+          "status": "P"
+        },
+        {
+          "period": 3,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 4,
+          "subject": "English",
+          "status": "P"
+        },
+        {
+          "period": 5,
+          "subject": "Maths",
+          "status": "A"
+        },
+        {
+          "period": 6,
+          "subject": "Biology",
+          "status": "A"
+        },
+        {
+          "period": 7,
+          "subject": "ES",
+          "status": "A"
+        }
+      ]
+    },
+    "2026-10-16": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Maths",
+          "status": "A"
+        },
+        {
+          "period": 2,
+          "subject": "IE",
+          "status": "A"
+        },
+        {
+          "period": 3,
+          "subject": "Chemistry Lab",
+          "status": "A"
+        },
+        {
+          "period": 4,
+          "subject": "Chemistry Lab",
+          "status": "A"
+        },
+        {
+          "period": 5,
+          "subject": "PSC",
+          "status": "A"
+        },
+        {
+          "period": 6,
+          "subject": "Chemistry",
+          "status": "A"
+        },
+        {
+          "period": 7,
+          "subject": "IE",
+          "status": "A"
+        }
+      ]
+    },
+    "2026-10-19": {
+      "type": "holiday",
+      "sessions": []
+    },
+    "2026-10-20": {
+      "type": "holiday",
+      "sessions": []
+    },
+    "2026-10-21": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "IE",
+          "status": "A"
+        },
+        {
+          "period": 3,
+          "subject": "PSC Lab",
+          "status": "A"
+        },
+        {
+          "period": 4,
+          "subject": "PSC Lab",
+          "status": "A"
+        },
+        {
+          "period": 5,
+          "subject": "PSC",
+          "status": "A"
+        },
+        {
+          "period": 6,
+          "subject": "Maths",
+          "status": "A"
+        },
+        {
+          "period": 7,
+          "subject": "Maths",
+          "status": "A"
+        }
+      ]
+    },
+    "2026-10-22": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Chemistry",
+          "status": "A"
+        },
+        {
+          "period": 2,
+          "subject": "IE",
+          "status": "A"
+        },
+        {
+          "period": 3,
+          "subject": "English",
+          "status": "A"
+        },
+        {
+          "period": 4,
+          "subject": "English",
+          "status": "A"
+        },
+        {
+          "period": 5,
+          "subject": "Maths",
+          "status": "A"
+        },
+        {
+          "period": 6,
+          "subject": "Biology",
+          "status": "A"
+        },
+        {
+          "period": 7,
+          "subject": "ES",
+          "status": "A"
+        }
+      ]
+    },
+    "2026-10-23": {
+      "type": "normal",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "Maths",
+          "status": "A"
+        },
+        {
+          "period": 2,
+          "subject": "IE",
+          "status": "A"
+        },
+        {
+          "period": 3,
+          "subject": "Chemistry Lab",
+          "status": "A"
+        },
+        {
+          "period": 4,
+          "subject": "Chemistry Lab",
+          "status": "A"
+        },
+        {
+          "period": 5,
+          "subject": "PSC",
+          "status": "A"
+        },
+        {
+          "period": 6,
+          "subject": "Chemistry",
+          "status": "A"
+        },
+        {
+          "period": 7,
+          "subject": "IE",
+          "status": "A"
+        }
+      ]
+    },
+    "2026-10-24": {
+      "type": "saturday_working",
+      "sessions": [
+        {
+          "period": 1,
+          "subject": "DT",
+          "status": "A"
+        },
+        {
+          "period": 2,
+          "subject": "PSC",
+          "status": "A"
+        },
+        {
+          "period": 3,
+          "subject": "Chemistry",
+          "status": "A"
+        },
+        {
+          "period": 4,
+          "subject": "English",
+          "status": "A"
+        },
+        {
+          "period": 7,
+          "subject": "Chemistry",
+          "status": "A"
+        }
+      ]
+    }
+  }
+}
