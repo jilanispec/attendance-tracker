@@ -225,179 +225,830 @@ th,td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line)}th{co
     </div>
   </div>
 </div>
-
 <script>
 "use strict";
-const START="2026-08-10", END="2026-11-30", KEY="jilan_attendance_json_v1";
-const SUBJECTS=[
-{name:"Maths",total:75},{name:"Chemistry",total:45},{name:"Chemistry Lab",total:30},{name:"PSC",total:45},{name:"PSC Lab",total:30},{name:"Biology",total:15},{name:"English",total:45},{name:"DT",total:50},{name:"ES",total:50},{name:"IE",total:45}
+
+const START = "2026-08-10";
+const END = "2026-11-30";
+const KEY = "jilan_attendance_json_v1";
+
+const SUBJECTS = [
+  {name:"Maths",total:75},
+  {name:"Chemistry",total:45},
+  {name:"Chemistry Lab",total:30},
+  {name:"PSC",total:45},
+  {name:"PSC Lab",total:30},
+  {name:"Biology",total:15},
+  {name:"English",total:45},
+  {name:"DT",total:50},
+  {name:"ES",total:50},
+  {name:"IE",total:45}
 ];
-const TIMETABLE={
-Monday:["DT","PSC","Chemistry","English",null,null,"Chemistry"],
-Tuesday:["Maths","DT","PSC","ES","ES","English","DT"],
-Wednesday:["IE",null,"PSC Lab","PSC Lab","PSC","Maths","Maths"],
-Thursday:["Chemistry","IE","English","English","Maths","Biology","ES"],
-Friday:["Maths","IE","Chemistry Lab","Chemistry Lab","PSC","Chemistry","IE"]
+
+const TIMETABLE = {
+  Monday:["DT","PSC","Chemistry","English",null,null,"Chemistry"],
+  Tuesday:["Maths","DT","PSC","ES","ES","English","DT"],
+  Wednesday:["IE",null,"PSC Lab","PSC Lab","PSC","Maths","Maths"],
+  Thursday:["Chemistry","IE","English","English","Maths","Biology","ES"],
+  Friday:["Maths","IE","Chemistry Lab","Chemistry Lab","PSC","Chemistry","IE"]
 };
-const PERIOD_TIMES=["8:00–8:50 AM","8:55–9:45 AM","9:50–10:40 AM","10:45–11:35 AM","12:45–1:35 PM","1:45–2:35 PM","2:45–3:35 PM"];
-const SEED={"semester":{"start":"2026-08-10","end":"2026-11-30"},"subjects":[{"name":"Maths","total":75},{"name":"Chemistry","total":45},{"name":"Chemistry Lab","total":30},{"name":"PSC","total":45},{"name":"PSC Lab","total":30},{"name":"Biology","total":15},{"name":"English","total":45},{"name":"DT","total":50},{"name":"ES","total":50},{"name":"IE","total":45}],"days":{"2026-08-10":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"DT","status":"P","optional":false},{"period":2,"subject":"PSC","status":"P","optional":false},{"period":3,"subject":"Chemistry","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":7,"subject":"Chemistry","status":"P","optional":false}]},"2026-08-11":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"DT","status":"P","optional":false},{"period":3,"subject":"PSC","status":"P","optional":false},{"period":4,"subject":"ES","status":"P","optional":false},{"period":5,"subject":"ES","status":"P","optional":false},{"period":6,"subject":"English","status":"P","optional":false},{"period":7,"subject":"DT","status":"P","optional":false}]},"2026-08-12":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"PSC Lab","status":"P","optional":false},{"period":4,"subject":"PSC Lab","status":"P","optional":false},{"period":5,"subject":"PSC","status":"P","optional":false},{"period":6,"subject":"Maths","status":"P","optional":false},{"period":7,"subject":"Maths","status":"P","optional":false}]},"2026-08-13":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Chemistry","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"English","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":5,"subject":"Maths","status":"P","optional":false},{"period":6,"subject":"Biology","status":"P","optional":false},{"period":7,"subject":"ES","status":"P","optional":false}]},"2026-08-14":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"Chemistry Lab","status":"P","optional":false},{"period":4,"subject":"Chemistry Lab","status":"P","optional":false},{"period":5,"subject":"PSC","status":"A","optional":false},{"period":6,"subject":"Chemistry","status":"P","optional":false},{"period":7,"subject":"IE","status":"P","optional":false}]},"2026-08-17":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"DT","status":"P","optional":false},{"period":2,"subject":"PSC","status":"P","optional":false},{"period":3,"subject":"Chemistry","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":7,"subject":"Chemistry","status":"P","optional":false}]},"2026-08-18":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"DT","status":"A","optional":false},{"period":3,"subject":"PSC","status":"P","optional":false},{"period":4,"subject":"ES","status":"P","optional":false},{"period":5,"subject":"ES","status":"P","optional":false},{"period":6,"subject":"English","status":"P","optional":false},{"period":7,"subject":"DT","status":"P","optional":false}]},"2026-08-19":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"PSC Lab","status":"P","optional":false},{"period":4,"subject":"PSC Lab","status":"P","optional":false},{"period":5,"subject":"PSC","status":"P","optional":false},{"period":6,"subject":"Maths","status":"P","optional":false},{"period":7,"subject":"Maths","status":"P","optional":false}]},"2026-08-20":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"Chemistry","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"English","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":5,"subject":"Maths","status":"P","optional":false},{"period":6,"subject":"Biology","status":"P","optional":false},{"period":7,"subject":"ES","status":"P","optional":false}]},"2026-08-21":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"IE","status":"A","optional":false},{"period":3,"subject":"Chemistry Lab","status":"P","optional":false},{"period":4,"subject":"Chemistry Lab","status":"P","optional":false},{"period":5,"subject":"PSC","status":"P","optional":false},{"period":6,"subject":"Chemistry","status":"P","optional":false},{"period":7,"subject":"IE","status":"P","optional":false}]},"2026-08-22":{"type":"saturday","weekday":"Wednesday","sessions":[{"period":1,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"PSC Lab","status":"A","optional":false},{"period":4,"subject":"PSC Lab","status":"A","optional":false},{"period":5,"subject":"PSC","status":"A","optional":false},{"period":6,"subject":"Maths","status":"A","optional":false},{"period":7,"subject":"Maths","status":"A","optional":false}]},"2026-08-24":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"DT","status":"P","optional":false},{"period":2,"subject":"PSC","status":"P","optional":false},{"period":3,"subject":"Chemistry","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":7,"subject":"Chemistry","status":"P","optional":false}]},"2026-08-25":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"DT","status":"P","optional":false},{"period":3,"subject":"PSC","status":"P","optional":false},{"period":4,"subject":"ES","status":"P","optional":false},{"period":5,"subject":"ES","status":"P","optional":false},{"period":6,"subject":"English","status":"P","optional":false},{"period":7,"subject":"DT","status":"P","optional":false}]},"2026-08-26":{"type":"holiday","weekday":null,"sessions":[]},"2026-08-27":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"Chemistry","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"English","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":5,"subject":"Maths","status":"P","optional":false},{"period":6,"subject":"Biology","status":"P","optional":false},{"period":7,"subject":"ES","status":"P","optional":false}]},"2026-08-28":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"Chemistry Lab","status":"P","optional":false},{"period":4,"subject":"Chemistry Lab","status":"P","optional":false},{"period":5,"subject":"PSC","status":"P","optional":false},{"period":6,"subject":"Chemistry","status":"P","optional":false},{"period":7,"subject":"IE","status":"P","optional":false}]},"2026-08-29":{"type":"saturday","weekday":"Thursday","sessions":[{"period":1,"subject":"Chemistry","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"English","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":5,"subject":"Maths","status":"P","optional":false},{"period":6,"subject":"Biology","status":"P","optional":false},{"period":7,"subject":"ES","status":"P","optional":false}]},"2026-08-30":{"type":"holiday","weekday":null,"sessions":[]},"2026-08-31":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"DT","status":"P","optional":false},{"period":2,"subject":"PSC","status":"P","optional":false},{"period":3,"subject":"Chemistry","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":7,"subject":"Chemistry","status":"P","optional":false}]},"2026-09-01":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"DT","status":"P","optional":false},{"period":3,"subject":"PSC","status":"P","optional":false},{"period":4,"subject":"ES","status":"N","optional":false},{"period":5,"subject":"ES","status":"P","optional":false},{"period":6,"subject":"English","status":"P","optional":false},{"period":7,"subject":"DT","status":"P","optional":false}]},"2026-09-02":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"IE","status":"A","optional":false},{"period":3,"subject":"PSC Lab","status":"A","optional":false},{"period":4,"subject":"PSC Lab","status":"A","optional":false},{"period":5,"subject":"PSC","status":"A","optional":false},{"period":6,"subject":"Maths","status":"A","optional":false},{"period":7,"subject":"Maths","status":"A","optional":false}]},"2026-09-03":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"Chemistry","status":"A","optional":false},{"period":2,"subject":"IE","status":"A","optional":false},{"period":3,"subject":"English","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":5,"subject":"Maths","status":"A","optional":false},{"period":6,"subject":"Biology","status":"A","optional":false},{"period":7,"subject":"ES","status":"A","optional":false}]},"2026-09-04":{"type":"holiday","weekday":null,"sessions":[]},"2026-09-05":{"type":"holiday","weekday":null,"sessions":[]},"2026-09-06":{"type":"holiday","weekday":null,"sessions":[]},"2026-09-07":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"DT","status":"P","optional":false},{"period":2,"subject":"PSC","status":"P","optional":false},{"period":3,"subject":"Chemistry","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":7,"subject":"Chemistry","status":"P","optional":false}]},"2026-09-08":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"DT","status":"P","optional":false},{"period":3,"subject":"PSC","status":"P","optional":false},{"period":4,"subject":"ES","status":"P","optional":false},{"period":5,"subject":"ES","status":"P","optional":false},{"period":6,"subject":"English","status":"P","optional":false},{"period":7,"subject":"DT","status":"P","optional":false}]},"2026-09-09":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"PSC Lab","status":"P","optional":false},{"period":4,"subject":"PSC Lab","status":"P","optional":false},{"period":5,"subject":"PSC","status":"N","optional":false},{"period":6,"subject":"Maths","status":"N","optional":false},{"period":7,"subject":"Maths","status":"N","optional":false}]},"2026-10-13":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"DT","status":"P","optional":false},{"period":3,"subject":"PSC","status":"P","optional":false},{"period":4,"subject":"ES","status":"P","optional":false},{"period":5,"subject":"ES","status":"A","optional":false},{"period":6,"subject":"English","status":"A","optional":false},{"period":7,"subject":"DT","status":"A","optional":false}]},"2026-10-14":{"type":"","weekday":null,"sessions":[{"period":1,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"PSC Lab","status":"P","optional":false},{"period":4,"subject":"PSC Lab","status":"P","optional":false},{"period":5,"subject":"PSC","status":"P","optional":false},{"period":6,"subject":"Maths","status":"P","optional":false},{"period":7,"subject":"Maths","status":"N","optional":false}]},"2026-10-15":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Chemistry","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"English","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":5,"subject":"Maths","status":"A","optional":false},{"period":6,"subject":"Biology","status":"A","optional":false},{"period":7,"subject":"ES","status":"A","optional":false}]},"2026-10-19":{"type":"holiday","sessions":[]},"2026-10-20":{"type":"holiday","sessions":[]},"2026-10-21":{"type":"working","sessions":[{"period":1,"subject":"IE","status":"A"},{"period":3,"subject":"PSC Lab","status":"A"},{"period":4,"subject":"PSC Lab","status":"A"},{"period":5,"subject":"PSC","status":"A"},{"period":6,"subject":"Maths","status":"A"},{"period":7,"subject":"Maths","status":"A"}]},"2026-10-22":{"type":"working","sessions":[{"period":1,"subject":"Chemistry","status":"A"},{"period":2,"subject":"IE","status":"A"},{"period":3,"subject":"English","status":"A"},{"period":4,"subject":"English","status":"A"},{"period":5,"subject":"Maths","status":"A"},{"period":6,"subject":"Biology","status":"A"},{"period":7,"subject":"ES","status":"A"}]},"2026-10-23":{"type":"working","sessions":[{"period":1,"subject":"Maths","status":"A"},{"period":2,"subject":"IE","status":"A"},{"period":3,"subject":"Chemistry Lab","status":"A"},{"period":4,"subject":"Chemistry Lab","status":"A"},{"period":5,"subject":"PSC","status":"A"},{"period":6,"subject":"Chemistry","status":"A"},{"period":7,"subject":"IE","status":"A"}]},"2026-10-24":{"type":"saturday","sessions":[{"period":1,"subject":"DT","status":"A"},{"period":2,"subject":"PSC","status":"A"},{"period":3,"subject":"Chemistry","status":"A"},{"period":4,"subject":"English","status":"A"},{"period":7,"subject":"Chemistry","status":"A"}]},"2026-08-15":{"type":"holiday","weekday":null,"sessions":[]},"2026-08-16":{"type":"holiday","weekday":null,"sessions":[]},"2026-08-23":{"type":"holiday","weekday":null,"sessions":[]},"2026-09-10":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Chemistry","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"English","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":5,"subject":"Maths","status":"P","optional":false},{"period":6,"subject":"Biology","status":"P","optional":false},{"period":7,"subject":"ES","status":"P","optional":false}]},"2026-09-11":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"Chemistry Lab","status":"P","optional":false},{"period":4,"subject":"Chemistry Lab","status":"P","optional":false},{"period":5,"subject":"PSC","status":"P","optional":false},{"period":6,"subject":"Chemistry","status":"P","optional":false},{"period":7,"subject":"IE","status":"P","optional":false}]},"2026-09-12":{"type":"saturday","weekday":"Friday","sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"Chemistry Lab","status":"P","optional":false},{"period":4,"subject":"Chemistry Lab","status":"P","optional":false},{"period":5,"subject":"PSC","status":"P","optional":false},{"period":6,"subject":"Chemistry","status":"P","optional":false},{"period":7,"subject":"IE","status":"P","optional":false}]},"2026-09-14":{"type":"holiday","weekday":null,"sessions":[]},"2026-09-15":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"DT","status":"P","optional":false},{"period":3,"subject":"PSC","status":"P","optional":false},{"period":4,"subject":"ES","status":"P","optional":false},{"period":5,"subject":"ES","status":"P","optional":false},{"period":6,"subject":"English","status":"P","optional":false},{"period":7,"subject":"DT","status":"P","optional":false}]},"2026-09-16":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"PSC Lab","status":"P","optional":false},{"period":4,"subject":"PSC Lab","status":"P","optional":false},{"period":5,"subject":"PSC","status":"P","optional":false},{"period":6,"subject":"Maths","status":"P","optional":false},{"period":7,"subject":"Maths","status":"P","optional":false}]},"2026-09-17":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Chemistry","status":"A","optional":false},{"period":2,"subject":"IE","status":"A","optional":false},{"period":3,"subject":"English","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":5,"subject":"Maths","status":"P","optional":false},{"period":6,"subject":"Biology","status":"P","optional":false},{"period":7,"subject":"ES","status":"P","optional":false}]},"2026-09-18":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"Chemistry Lab","status":"P","optional":false},{"period":4,"subject":"Chemistry Lab","status":"P","optional":false},{"period":5,"subject":"PSC","status":"P","optional":false},{"period":6,"subject":"Chemistry","status":"P","optional":false},{"period":7,"subject":"IE","status":"P","optional":false}]},"2026-09-21":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"DT","status":"P","optional":false},{"period":2,"subject":"PSC","status":"P","optional":false},{"period":3,"subject":"Chemistry","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":7,"subject":"Chemistry","status":"P","optional":false}]},"2026-09-22":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"DT","status":"P","optional":false},{"period":3,"subject":"PSC","status":"P","optional":false},{"period":4,"subject":"ES","status":"P","optional":false},{"period":5,"subject":"ES","status":"P","optional":false},{"period":6,"subject":"English","status":"P","optional":false},{"period":7,"subject":"DT","status":"P","optional":false}]},"2026-09-23":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"PSC Lab","status":"P","optional":false},{"period":4,"subject":"PSC Lab","status":"P","optional":false},{"period":5,"subject":"PSC","status":"P","optional":false},{"period":6,"subject":"Maths","status":"P","optional":false},{"period":7,"subject":"Maths","status":"P","optional":false}]},"2026-09-24":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Chemistry","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"English","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":5,"subject":"Maths","status":"P","optional":false},{"period":6,"subject":"Biology","status":"P","optional":false},{"period":7,"subject":"ES","status":"P","optional":false}]},"2026-09-25":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"Chemistry Lab","status":"P","optional":false},{"period":4,"subject":"Chemistry Lab","status":"P","optional":false},{"period":5,"subject":"PSC","status":"P","optional":false},{"period":6,"subject":"Chemistry","status":"P","optional":false},{"period":7,"subject":"IE","status":"P","optional":false}]},"2026-09-26":{"type":"saturday","weekday":"Monday","sessions":[{"period":1,"subject":"DT","status":"P","optional":false},{"period":2,"subject":"PSC","status":"P","optional":false},{"period":3,"subject":"Chemistry","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":7,"subject":"Chemistry","status":"P","optional":false}]},"2026-09-28":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"DT","status":"P","optional":false},{"period":2,"subject":"PSC","status":"P","optional":false},{"period":3,"subject":"Chemistry","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":7,"subject":"Chemistry","status":"P","optional":false}]},"2026-09-29":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"DT","status":"P","optional":false},{"period":3,"subject":"PSC","status":"P","optional":false},{"period":4,"subject":"ES","status":"P","optional":false},{"period":5,"subject":"ES","status":"P","optional":false},{"period":6,"subject":"English","status":"P","optional":false},{"period":7,"subject":"DT","status":"P","optional":false}]},"2026-09-30":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"PSC Lab","status":"P","optional":false},{"period":4,"subject":"PSC Lab","status":"P","optional":false},{"period":5,"subject":"PSC","status":"P","optional":false},{"period":6,"subject":"Maths","status":"P","optional":false},{"period":7,"subject":"Maths","status":"P","optional":false}]},"2026-10-01":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Chemistry","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"English","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":5,"subject":"Maths","status":"P","optional":false},{"period":6,"subject":"Biology","status":"P","optional":false},{"period":7,"subject":"ES","status":"P","optional":false}]},"2026-10-02":{"type":"holiday","weekday":null,"sessions":[]},"2026-10-05":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"DT","status":"P","optional":false},{"period":2,"subject":"PSC","status":"P","optional":false},{"period":3,"subject":"Chemistry","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":7,"subject":"Chemistry","status":"P","optional":false}]},"2026-10-06":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"DT","status":"P","optional":false},{"period":3,"subject":"PSC","status":"P","optional":false},{"period":4,"subject":"ES","status":"P","optional":false},{"period":5,"subject":"ES","status":"P","optional":false},{"period":6,"subject":"English","status":"P","optional":false},{"period":7,"subject":"DT","status":"P","optional":false}]},"2026-10-07":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"PSC Lab","status":"P","optional":false},{"period":4,"subject":"PSC Lab","status":"P","optional":false},{"period":5,"subject":"PSC","status":"P","optional":false},{"period":6,"subject":"Maths","status":"P","optional":false},{"period":7,"subject":"Maths","status":"P","optional":false}]},"2026-10-08":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Chemistry","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"English","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":5,"subject":"Maths","status":"P","optional":false},{"period":6,"subject":"Biology","status":"P","optional":false},{"period":7,"subject":"ES","status":"P","optional":false}]},"2026-10-09":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"Chemistry Lab","status":"P","optional":false},{"period":4,"subject":"Chemistry Lab","status":"P","optional":false},{"period":5,"subject":"PSC","status":"P","optional":false},{"period":6,"subject":"Chemistry","status":"P","optional":false},{"period":7,"subject":"IE","status":"P","optional":false}]},"2026-10-10":{"type":"saturday","weekday":"Friday","sessions":[{"period":1,"subject":"Maths","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"Chemistry Lab","status":"P","optional":false},{"period":4,"subject":"Chemistry Lab","status":"P","optional":false},{"period":5,"subject":"PSC","status":"P","optional":false},{"period":6,"subject":"Chemistry","status":"P","optional":false},{"period":7,"subject":"IE","status":"P","optional":false}]},"2026-10-12":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Chemistry","status":"P","optional":false},{"period":2,"subject":"IE","status":"P","optional":false},{"period":3,"subject":"English","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":5,"subject":"Maths","status":"A","optional":false},{"period":6,"subject":"Biology","status":"A","optional":false},{"period":7,"subject":"ES","status":"A","optional":false}]},"2026-10-16":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"Maths","status":"A","optional":false},{"period":2,"subject":"IE","status":"A","optional":false},{"period":3,"subject":"Chemistry Lab","status":"A","optional":false},{"period":4,"subject":"Chemistry Lab","status":"A","optional":false},{"period":5,"subject":"PSC","status":"A","optional":false},{"period":6,"subject":"Chemistry","status":"A","optional":false},{"period":7,"subject":"IE","status":"A","optional":false}]},"2026-10-17":{"type":"working","weekday":null,"sessions":[]},"2026-10-26":{"type":"working","weekday":null,"sessions":[{"period":1,"subject":"DT","status":"P","optional":false},{"period":2,"subject":"PSC","status":"P","optional":false},{"period":3,"subject":"Chemistry","status":"P","optional":false},{"period":4,"subject":"English","status":"P","optional":false},{"period":7,"subject":"Chemistry","status":"A","optional":false}]},"2026-10-31":{"type":"saturday","weekday":"Tuesday","sessions":[{"period":1,"subject":"Maths","status":"A","optional":false},{"period":2,"subject":"DT","status":"N","optional":false},{"period":3,"subject":"PSC","status":"N","optional":false},{"period":4,"subject":"ES","status":"N","optional":false},{"period":5,"subject":"ES","status":"N","optional":false},{"period":6,"subject":"English","status":"N","optional":false},{"period":7,"subject":"DT","status":"N","optional":false}]}},"gpa":{"sgpa":7.9,"cgpa":8.5}};
-let data, currentSessions=[], percentageMode="held", reportMonth=new Date(2026,7,1), selectedSubject=null;
-const $=id=>document.getElementById(id), clone=x=>JSON.parse(JSON.stringify(x));
-function escapeHTML(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function notify(text,error=false){const box=$("message");box.textContent=text;box.className=error?"error":"";box.style.display="block";setTimeout(()=>box.style.display="none",3500);}
-function weekdayName(date){return new Date(date+"T12:00:00").toLocaleDateString("en-US",{weekday:"long"});}
-function isWeekend(date){const d=new Date(date+"T12:00:00").getDay();return d===0||d===6;}
-function blankData(){return{semester:{start:START,end:END},subjects:clone(SUBJECTS),days:{},gpa:{sgpa:null,cgpa:null}};}
-function normalizeData(input){
- const d=input&&typeof input==="object"?input:blankData();
- if(!d.days||typeof d.days!=="object")d.days={};
- d.semester={start:START,end:END};d.subjects=clone(SUBJECTS);if(!d.gpa)d.gpa={sgpa:null,cgpa:null};
- for(const date of Object.keys(d.days)){
-  if(date<START||date>END){delete d.days[date];continue;}
-  const day=d.days[date]||{};day.sessions=Array.isArray(day.sessions)?day.sessions:[];
-  day.sessions=day.sessions.map(s=>({...s,status:["P","A","N"].includes(s.status)?s.status:"N",period:Number(s.period)||1,optional:!!s.optional}));
-  const wd=weekdayName(date);
-  if(wd==="Sunday"){
-   // Sunday is a holiday under the requested semester rule. Keep old sessions in storage for recovery,
-   // but mark the date as a holiday so they are not counted.
-   day.type="holiday";day.reason=day.reason||"Sunday holiday";
-  }else if(wd==="Saturday"){
-   // Preserve an already-entered Saturday class record; new Saturdays default to holiday.
-   day.type=day.sessions.length?"saturday":"holiday";
-   if(day.type==="saturday"&&!day.weekday)day.weekday="Monday";
-  }else{
-   // All Monday-Friday dates are working days. Existing period statuses remain untouched.
-   day.type="working";day.weekday=null;
-   if(!day.sessions.length)day.sessions=makeSessions(date,"working");
+
+const PERIOD_TIMES = [
+  "8:00–8:50 AM",
+  "8:55–9:45 AM",
+  "9:50–10:40 AM",
+  "10:45–11:35 AM",
+  "12:45–1:35 PM",
+  "1:45–2:35 PM",
+  "2:45–3:35 PM"
+];
+
+/* REPLACE THIS LINE WITH YOUR COMPLETE ORIGINAL const SEED=... LINE */
+const SEED = {"semester":{"start":"2026-08-10","end":"2026-11-30"},"subjects":[],"days":{},"gpa":{"sgpa":7.9,"cgpa":8.5}};
+
+let data;
+let currentSessions = [];
+let percentageMode = "held";
+let reportMonth = new Date(2026,7,1);
+let selectedSubject = null;
+let editingIndex = null;
+
+const $ = id => document.getElementById(id);
+const clone = x => JSON.parse(JSON.stringify(x));
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function notify(text,error=false) {
+  const box=$("message");
+  box.textContent=text;
+  box.className=error?"error":"";
+  box.style.display="block";
+  setTimeout(()=>box.style.display="none",3500);
+}
+
+function weekdayName(date) {
+  return new Date(date+"T12:00:00").toLocaleDateString("en-US",{weekday:"long"});
+}
+
+function isWeekend(date) {
+  const d=new Date(date+"T12:00:00").getDay();
+  return d===0||d===6;
+}
+
+function blankData() {
+  return {
+    semester:{start:START,end:END},
+    subjects:clone(SUBJECTS),
+    days:{},
+    gpa:{sgpa:null,cgpa:null}
+  };
+}
+
+/* Preserve existing dates, statuses, subjects and day types.
+   Do not generate sessions for empty saved dates. */
+function normalizeData(input) {
+  const d=input&&typeof input==="object"?input:blankData();
+
+  if(!d.days||typeof d.days!=="object") d.days={};
+
+  d.semester={start:START,end:END};
+  d.subjects=clone(SUBJECTS);
+
+  if(!d.gpa||typeof d.gpa!=="object") {
+    d.gpa={sgpa:null,cgpa:null};
   }
-  d.days[date]=day;
- }
- return d;
-}
-function loadData(){
- try{const saved=localStorage.getItem(KEY);data=normalizeData(saved?JSON.parse(saved):clone(SEED));}
- catch(e){data=normalizeData(clone(SEED));}
- saveData(false);
-}
-function saveData(show=true){localStorage.setItem(KEY,JSON.stringify(data));if(show)notify("Attendance saved in this browser.");}
-function validDate(date){return date&&date>=START&&date<=END;}
-function makeSessions(date,type,rep){
- if(type==="holiday")return [];
- const day=type==="saturday"?(rep||"Monday"):weekdayName(date);
- return (TIMETABLE[day]||[]).map((subject,i)=>({period:i+1,subject:subject||(i===1?"Free period":"Mentoring"),status:"N",optional:!subject}));
-}
-function showScreen(name){
- document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===name));
- document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.screen===name));
- window.scrollTo({top:0,behavior:"smooth"});
- if(name==="dashboard")renderDashboard();if(name==="attendance"){selectedSubject=null;showAttendanceOverview();renderAttendance();}
- if(name==="reports")renderMonth();if(name==="more")renderTargets();
-}
-document.querySelectorAll(".nav-item").forEach(b=>b.addEventListener("click",()=>showScreen(b.dataset.screen)));
 
-function loadEntry(){
- const date=$("date").value;if(!validDate(date)){notify("Choose a date inside the semester.",true);return;}
- const old=data.days[date],type=$("daytype").value;
- $("weekdayWrap").style.display=type==="saturday"?"block":"none";$("holidayWrap").style.display=type==="holiday"?"block":"none";
- if(type==="saturday")$("weekday").value=old?.weekday||"Monday";
- if(old&&old.type===type){currentSessions=clone(old.sessions||[]);$("holidayReason").value=old.reason||"";}
- else{currentSessions=makeSessions(date,type,$("weekday").value);$("holidayReason").value="";}
- drawSessions();
+  for(const date of Object.keys(d.days)) {
+    const day=d.days[date]||{};
+    day.sessions=Array.isArray(day.sessions)?day.sessions:[];
+
+    day.sessions=day.sessions.map(s=>({
+      ...s,
+      period:Number(s.period)||1,
+      status:["P","A","N"].includes(s.status)?s.status:"N",
+      optional:!!s.optional,
+      hours:Number(s.hours)>0?Number(s.hours):1
+    }));
+
+    if(!["working","saturday","holiday"].includes(day.type)) {
+      if(isWeekend(date)) {
+        day.type=day.sessions.length?"saturday":"holiday";
+      } else {
+        day.type="working";
+      }
+    }
+
+    if(day.type==="saturday"&&!day.weekday) {
+      day.weekday="Monday";
+    }
+
+    d.days[date]=day;
+  }
+
+  return d;
 }
-function drawSessions(){
- const root=$("sessions");root.innerHTML="";
- if($("daytype").value==="holiday"){root.innerHTML='<p class="muted">Holiday selected. No classes will be counted for this date.</p>';return;}
- currentSessions.forEach((s,index)=>{
-  const card=document.createElement("div");card.className="subject";
-  const title=document.createElement("div");title.className="subject-head";
-  title.textContent=`Period ${s.period} · ${s.subject} · ${PERIOD_TIMES[s.period-1]||"Time not set"}`;card.appendChild(title);
-  const choices=document.createElement("div");choices.className="choices";
-  [["P","Present"],["A","Absent"],["N","Not Held"]].forEach(([value,label])=>{
-   const b=document.createElement("button");b.textContent=label;b.className=s.status===value?(value==="P"?"selected-p":value==="A"?"selected-a":"selected-n"):"";
-   b.onclick=()=>{currentSessions[index].status=value;drawSessions();};choices.appendChild(b);
-  });card.appendChild(choices);root.appendChild(card);
- });
+
+function loadData() {
+  try {
+    const saved=localStorage.getItem(KEY);
+    data=normalizeData(saved?JSON.parse(saved):clone(SEED));
+  } catch(e) {
+    data=normalizeData(clone(SEED));
+    notify("Could not read saved data. Check your backup.",true);
+  }
+  saveData(false);
 }
-function saveDay(){
- const date=$("date").value;if(!validDate(date))return notify("Invalid semester date.",true);
- const type=$("daytype").value;
- if(type==="holiday"){data.days[date]={type:"holiday",reason:$("holidayReason").value.trim()||"Holiday",sessions:[]};}
- else{data.days[date]={type,weekday:type==="saturday"?$("weekday").value:null,sessions:clone(currentSessions)};}
- saveData(false);refreshAll();notify("Attendance saved for "+date+".");
+
+function saveData(show=true) {
+  localStorage.setItem(KEY,JSON.stringify(data));
+  if(show) notify("Attendance saved in this browser.");
 }
-function clearDay(){
- const date=$("date").value;if(!validDate(date))return;
- if(isWeekend(date)){data.days[date]={type:"holiday",sessions:[]};}
- else{data.days[date]={type:"working",weekday:null,sessions:makeSessions(date,"working")};}
- saveData(false);loadEntry();refreshAll();notify("Date reset. Existing attendance for this date was cleared.");
+
+function validDate(date) {
+  return date&&date>=START&&date<=END;
 }
+
+function makeSessions(date,type,rep) {
+  if(type==="holiday") return [];
+
+  const day=type==="saturday"?(rep||"Monday"):weekdayName(date);
+
+  return (TIMETABLE[day]||[]).map((subject,i)=>({
+    period:i+1,
+    subject:subject||(i===1?"Free period":"Mentoring"),
+    status:"N",
+    optional:!subject,
+    hours:1
+  }));
+}
+
+function showScreen(name) {
+  document.querySelectorAll(".screen").forEach(s=>
+    s.classList.toggle("active",s.id===name)
+  );
+
+  document.querySelectorAll(".nav-item").forEach(b=>
+    b.classList.toggle("active",b.dataset.screen===name)
+  );
+
+  window.scrollTo({top:0,behavior:"smooth"});
+
+  if(name==="dashboard") renderDashboard();
+
+  if(name==="attendance") {
+    selectedSubject=null;
+    showAttendanceOverview();
+    renderAttendance();
+  }
+
+  if(name==="reports") renderMonth();
+  if(name==="more") renderTargets();
+}
+
+document.querySelectorAll(".nav-item").forEach(b=>
+  b.addEventListener("click",()=>showScreen(b.dataset.screen))
+);
+
+/* DAILY ENTRY */
+
+function loadEntry() {
+  const date=$("date").value;
+
+  if(!validDate(date)) {
+    notify("Choose a date inside the semester.",true);
+    return;
+  }
+
+  const old=data.days[date];
+  const type=$("daytype").value;
+
+  $("weekdayWrap").style.display=type==="saturday"?"block":"none";
+  $("holidayWrap").style.display=type==="holiday"?"block":"none";
+
+  if(type==="saturday") {
+    $("weekday").value=old?.weekday||"Monday";
+  }
+
+  if(old&&old.type===type) {
+    currentSessions=clone(old.sessions||[]);
+    $("holidayReason").value=old.reason||"";
+  } else {
+    currentSessions=makeSessions(date,type,$("weekday").value);
+    $("holidayReason").value="";
+  }
+
+  drawSessions();
+}
+
+function drawSessions() {
+  const root=$("sessions");
+  root.innerHTML="";
+
+  if($("daytype").value==="holiday") {
+    root.innerHTML='<p class="muted">Holiday selected. No classes will be counted for this date.</p>';
+    return;
+  }
+
+  currentSessions.forEach((s,index)=>{
+    const card=document.createElement("div");
+    card.className="subject";
+
+    const title=document.createElement("div");
+    title.className="subject-head";
+
+    const name=document.createElement("span");
+    name.textContent=`Period ${s.period} · ${s.subject}`;
+
+    const edit=document.createElement("button");
+    edit.type="button";
+    edit.className="edit-subject";
+    edit.textContent="✎ Change";
+    edit.onclick=()=>openSubjectEditor(index);
+
+    title.appendChild(name);
+    title.appendChild(edit);
+    card.appendChild(title);
+
+    const time=document.createElement("p");
+    time.className="muted";
+    time.textContent=
+      `${PERIOD_TIMES[s.period-1]||"Time not set"} · ${s.hours||1} hour(s)`;
+    card.appendChild(time);
+
+    const choices=document.createElement("div");
+    choices.className="choices";
+
+    [["P","Present"],["A","Absent"],["N","Not Held"]].forEach(([value,label])=>{
+      const b=document.createElement("button");
+      b.textContent=label;
+
+      b.className=s.status===value?
+        (value==="P"?"selected-p":value==="A"?"selected-a":"selected-n"):"";
+
+      b.onclick=()=>{
+        currentSessions[index].status=value;
+        drawSessions();
+      };
+
+      choices.appendChild(b);
+    });
+
+    card.appendChild(choices);
+    root.appendChild(card);
+  });
+}
+
+/* SUBJECT CHANGE POPUP */
+
+function openSubjectEditor(index) {
+  editingIndex=index;
+
+  const s=currentSessions[index];
+  if(!s) return;
+
+  $("modalPeriod").textContent=
+    `Period ${s.period} · Current subject: ${s.subject}`;
+
+  $("replacementSubject").value=
+    SUBJECTS.some(x=>x.name===s.subject)?s.subject:"Maths";
+
+  $("replacementHours").value=s.hours||1;
+  $("subjectModal").classList.add("open");
+}
+
+function closeSubjectEditor() {
+  $("subjectModal").classList.remove("open");
+  editingIndex=null;
+}
+
+$("cancelSubject").onclick=closeSubjectEditor;
+
+$("subjectModal").addEventListener("click",e=>{
+  if(e.target===$("subjectModal")) closeSubjectEditor();
+});
+
+$("confirmSubject").onclick=()=>{
+  if(editingIndex===null) return;
+
+  const subject=$("replacementSubject").value;
+  const hours=Number($("replacementHours").value);
+
+  if(!SUBJECTS.some(x=>x.name===subject)) {
+    notify("Choose a valid subject.",true);
+    return;
+  }
+
+  if(!Number.isFinite(hours)||hours<0.25||hours>12) {
+    notify("Hours must be between 0.25 and 12.",true);
+    return;
+  }
+
+  currentSessions[editingIndex].subject=subject;
+  currentSessions[editingIndex].hours=hours;
+  currentSessions[editingIndex].optional=false;
+
+  closeSubjectEditor();
+  drawSessions();
+  notify("Period updated. Press Save attendance to store the change.");
+};
+
+/* SAVE AND CLEAR */
+
+function saveDay() {
+  const date=$("date").value;
+
+  if(!validDate(date)) {
+    notify("Invalid semester date.",true);
+    return;
+  }
+
+  const type=$("daytype").value;
+
+  if(type==="holiday") {
+    data.days[date]={
+      type:"holiday",
+      reason:$("holidayReason").value.trim()||"Holiday",
+      sessions:[]
+    };
+  } else {
+    data.days[date]={
+      type,
+      weekday:type==="saturday"?$("weekday").value:null,
+      sessions:clone(currentSessions)
+    };
+  }
+
+  saveData(false);
+  refreshAll();
+  notify("Attendance saved for "+date+".");
+}
+
+function clearDay() {
+  const date=$("date").value;
+  if(!validDate(date)) return;
+
+  if(isWeekend(date)) {
+    data.days[date]={type:"holiday",sessions:[]};
+  } else {
+    data.days[date]={
+      type:"working",
+      weekday:null,
+      sessions:[]
+    };
+  }
+
+  saveData(false);
+  loadEntry();
+  refreshAll();
+  notify("Date cleared. No attendance sessions were generated.");
+}
+
 $("date").value="2026-11-05";
-$("date").onchange=()=>{const date=$("date").value,old=data.days[date];$("daytype").value=old?.type||(isWeekend(date)?"holiday":"working");loadEntry();};
-$("daytype").onchange=loadEntry;$("weekday").onchange=()=>{currentSessions=makeSessions($("date").value,"saturday",$("weekday").value);drawSessions();};
-$("saveDay").onclick=saveDay;$("clearDay").onclick=clearDay;
 
-function calculate(days){
- const subjects={};SUBJECTS.forEach(s=>subjects[s.name]={...s,held:0,present:0,absent:0,notheld:0});
- for(const day of days){if(!day||day.type==="holiday")continue;for(const s of day.sessions||[]){const item=subjects[s.subject];if(!item||s.optional)continue;
-  if(s.status==="P"){item.held++;item.present++;}else if(s.status==="A"){item.held++;item.absent++;}else if(s.status==="N"){item.notheld++;}
- }}
- const total=Object.values(subjects).reduce((a,s)=>({held:a.held+s.held,present:a.present+s.present,absent:a.absent+s.absent,notheld:a.notheld+s.notheld,target:a.target+s.total}),{held:0,present:0,absent:0,notheld:0,target:0});
- return{subjects,total};
+$("date").onchange=()=>{
+  const date=$("date").value;
+  const old=data.days[date];
+
+  $("daytype").value=old?.type||
+    (isWeekend(date)?"holiday":"working");
+
+  loadEntry();
+};
+
+$("daytype").onchange=loadEntry;
+
+$("weekday").onchange=()=>{
+  currentSessions=makeSessions(
+    $("date").value,
+    "saturday",
+    $("weekday").value
+  );
+  drawSessions();
+};
+
+$("saveDay").onclick=saveDay;
+$("clearDay").onclick=clearDay;
+
+/* ATTENDANCE CALCULATIONS
+   Hours are stored separately.
+   Attendance remains period-based, not hour-weighted. */
+
+function calculate(days) {
+  const subjects={};
+
+  SUBJECTS.forEach(s=>{
+    subjects[s.name]={
+      ...s,
+      held:0,
+      present:0,
+      absent:0,
+      notheld:0
+    };
+  });
+
+  for(const day of days) {
+    if(!day||day.type==="holiday") continue;
+
+    for(const s of day.sessions||[]) {
+      const item=subjects[s.subject];
+
+      if(!item||s.optional) continue;
+
+      if(s.status==="P") {
+        item.held++;
+        item.present++;
+      } else if(s.status==="A") {
+        item.held++;
+        item.absent++;
+      } else if(s.status==="N") {
+        item.notheld++;
+      }
+    }
+  }
+
+  const total=Object.values(subjects).reduce((a,s)=>({
+    held:a.held+s.held,
+    present:a.present+s.present,
+    absent:a.absent+s.absent,
+    notheld:a.notheld+s.notheld,
+    target:a.target+s.total
+  }),{
+    held:0,present:0,absent:0,notheld:0,target:0
+  });
+
+  return {subjects,total};
 }
-function percent(a,b){return b?100*a/b:0;}function showPercent(a,b){return b?percent(a,b).toFixed(2)+"%":"—";}
-function selectedPercent(s){return percentageMode==="held"?showPercent(s.present,s.held):showPercent(s.present,s.total);}
-function showAttendanceOverview(){$("attendanceOverview").style.display="block";$("subjectDetail").style.display="none";}
-function renderAttendance(){
- const {subjects,total}=calculate(Object.values(data.days));
- $("overallPercent").textContent=percentageMode==="held"?showPercent(total.present,total.held):showPercent(total.present,total.target);
- $("totalHeld").textContent=total.held;$("totalPresent").textContent=total.present;$("totalAbsent").textContent=total.absent;$("totalNotHeld").textContent=total.notheld;
- $("formula").textContent=percentageMode==="held"?"Held % = Present ÷ (Present + Absent) × 100.":"Semester target % = Present ÷ subject semester target × 100.";
- let list=Object.values(subjects).sort((a,b)=>{const pa=percentageMode==="held"?percent(a.present,a.held):percent(a.present,a.total),pb=percentageMode==="held"?percent(b.present,b.held):percent(b.present,b.total);return $("sort").value==="asc"?pa-pb:pb-pa;});
- $("subjectReports").innerHTML=list.map(s=>{const p=percentageMode==="held"?percent(s.present,s.held):percent(s.present,s.total);return `<div class="subject clickable" role="button" tabindex="0" data-subject="${escapeHTML(s.name)}"><div class="subject-head"><span>${escapeHTML(s.name)}</span><strong>${selectedPercent(s)}</strong></div><div class="muted">${s.present} present · ${s.absent} absent · ${s.held} held · target ${s.total}</div><div class="progress"><span style="width:${Math.min(100,p)}%"></span></div></div>`;}).join("");
- $("subjectReports").querySelectorAll("[data-subject]").forEach(el=>{const open=()=>openSubject(el.dataset.subject);el.addEventListener("click",open);el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open();}});});
+
+function percent(a,b) {
+  return b?100*a/b:0;
 }
-function openSubject(name){
- selectedSubject=name;$("attendanceOverview").style.display="none";$("subjectDetail").style.display="block";
- const all=[];Object.entries(data.days).sort(([a],[b])=>a.localeCompare(b)).forEach(([date,day])=>{
-  if(day.type==="holiday")return;
-  (day.sessions||[]).filter(s=>s.subject===name&&!s.optional).forEach(s=>all.push({date,day,s}));
- });
- const counts={P:0,A:0,N:0};all.forEach(x=>counts[x.s.status]++);
- const held=counts.P+counts.A;$("detailName").textContent=name;
- $("detailSummary").textContent=`${all.length} saved period entries · Semester target ${SUBJECTS.find(s=>s.name===name).total}`;
- $("detailP").textContent=counts.P;$("detailA").textContent=counts.A;$("detailN").textContent=counts.N;$("detailPct").textContent=showPercent(counts.P,held);
- $("subjectDateRecords").innerHTML=all.length?all.map(({date,s})=>`<div class="record-line"><div><strong>${new Date(date+"T12:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"2-digit",month:"short",year:"numeric"})}</strong><div class="record-meta">Period ${s.period} · ${escapeHTML(PERIOD_TIMES[s.period-1]||"Time not set")}</div></div><span class="status ${s.status}">${s.status}</span></div>`).join(""):'<div class="empty">No saved attendance entries for this subject yet.</div>';
- window.scrollTo({top:0,behavior:"smooth"});
+
+function showPercent(a,b) {
+  return b?percent(a,b).toFixed(2)+"%":"—";
 }
-$("backSubjects").onclick=()=>{showAttendanceOverview();renderAttendance();};
-$("heldButton").onclick=()=>{percentageMode="held";$("heldButton").className="chosen";$("overallButton").className="secondary";renderAttendance();};
-$("overallButton").onclick=()=>{percentageMode="overall";$("overallButton").className="chosen";$("heldButton").className="secondary";renderAttendance();};
+
+function selectedPercent(s) {
+  return percentageMode==="held"?
+    showPercent(s.present,s.held):
+    showPercent(s.present,s.total);
+}
+
+function showAttendanceOverview() {
+  $("attendanceOverview").style.display="block";
+  $("subjectDetail").style.display="none";
+}
+
+function renderAttendance() {
+  const {subjects,total}=calculate(Object.values(data.days));
+
+  $("overallPercent").textContent=
+    percentageMode==="held"?
+    showPercent(total.present,total.held):
+    showPercent(total.present,total.target);
+
+  $("totalHeld").textContent=total.held;
+  $("totalPresent").textContent=total.present;
+  $("totalAbsent").textContent=total.absent;
+  $("totalNotHeld").textContent=total.notheld;
+
+  $("formula").textContent=percentageMode==="held"?
+    "Held % = Present ÷ (Present + Absent) × 100.":
+    "Semester target % = Present ÷ subject semester target × 100.";
+
+  const list=Object.values(subjects).sort((a,b)=>{
+    const pa=percentageMode==="held"?
+      percent(a.present,a.held):percent(a.present,a.total);
+
+    const pb=percentageMode==="held"?
+      percent(b.present,b.held):percent(b.present,b.total);
+
+    return $("sort").value==="asc"?pa-pb:pb-pa;
+  });
+
+  $("subjectReports").innerHTML=list.map(s=>{
+    const p=percentageMode==="held"?
+      percent(s.present,s.held):percent(s.present,s.total);
+
+    return `
+      <div class="subject clickable" role="button" tabindex="0"
+        data-subject="${escapeHTML(s.name)}">
+        <div class="subject-head">
+          <span>${escapeHTML(s.name)}</span>
+          <strong>${selectedPercent(s)}</strong>
+        </div>
+        <div class="muted">
+          ${s.present} present · ${s.absent} absent ·
+          ${s.held} held · target ${s.total}
+        </div>
+        <div class="progress">
+          <span style="width:${Math.min(100,p)}%"></span>
+        </div>
+      </div>`;
+  }).join("");
+
+  $("subjectReports").querySelectorAll("[data-subject]").forEach(el=>{
+    const open=()=>openSubject(el.dataset.subject);
+
+    el.addEventListener("click",open);
+
+    el.addEventListener("keydown",e=>{
+      if(e.key==="Enter"||e.key===" ") {
+        e.preventDefault();
+        open();
+      }
+    });
+  });
+}
+
+function openSubject(name) {
+  selectedSubject=name;
+
+  $("attendanceOverview").style.display="none";
+  $("subjectDetail").style.display="block";
+
+  const all=[];
+
+  Object.entries(data.days)
+    .sort(([a],[b])=>a.localeCompare(b))
+    .forEach(([date,day])=>{
+      if(day.type==="holiday") return;
+
+      (day.sessions||[])
+        .filter(s=>s.subject===name&&!s.optional)
+        .forEach(s=>all.push({date,day,s}));
+    });
+
+  const counts={P:0,A:0,N:0};
+  all.forEach(x=>counts[x.s.status]++);
+
+  const held=counts.P+counts.A;
+
+  $("detailName").textContent=name;
+  $("detailSummary").textContent=
+    `${all.length} saved period entries · Semester target ${
+      SUBJECTS.find(s=>s.name===name).total
+    }`;
+
+  $("detailP").textContent=counts.P;
+  $("detailA").textContent=counts.A;
+  $("detailN").textContent=counts.N;
+  $("detailPct").textContent=showPercent(counts.P,held);
+
+  $("subjectDateRecords").innerHTML=all.length?
+    all.map(({date,s})=>`
+      <div class="record-line">
+        <div>
+          <strong>${new Date(date+"T12:00:00").toLocaleDateString(
+            "en-GB",
+            {weekday:"long",day:"2-digit",month:"short",year:"numeric"}
+          )}</strong>
+          <div class="record-meta">
+            Period ${s.period} ·
+            ${escapeHTML(PERIOD_TIMES[s.period-1]||"Time not set")}
+            · ${s.hours||1} hour(s)
+          </div>
+        </div>
+        <span class="status ${s.status}">${s.status}</span>
+      </div>
+    `).join("") :
+    '<div class="empty">No saved attendance entries for this subject yet.</div>';
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+$("backSubjects").onclick=()=>{
+  showAttendanceOverview();
+  renderAttendance();
+};
+
+$("heldButton").onclick=()=>{
+  percentageMode="held";
+  $("heldButton").className="chosen";
+  $("overallButton").className="secondary";
+  renderAttendance();
+};
+
+$("overallButton").onclick=()=>{
+  percentageMode="overall";
+  $("overallButton").className="chosen";
+  $("heldButton").className="secondary";
+  renderAttendance();
+};
+
 $("sort").onchange=renderAttendance;
 
-function renderDashboard(){
- const {subjects,total}=calculate(Object.values(data.days));
- $("todayLabel").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long",year:"numeric"});
- $("dashPercent").textContent=showPercent(total.present,total.held);$("dashPresent").textContent=total.present;$("dashHeld").textContent=total.held;
- $("dashboardSubjects").innerHTML=SUBJECTS.map(s=>{const x=subjects[s.name],p=percent(x.present,x.total);return `<div class="subject clickable" data-subject="${escapeHTML(s.name)}"><div class="subject-head"><span>${escapeHTML(s.name)}</span><span class="badge">${x.held} / ${s.total} held</span></div><div class="muted">${x.present} present · ${x.absent} absent · ${p.toFixed(2)}% of target</div><div class="progress"><span style="width:${Math.min(100,p)}%"></span></div></div>`;}).join("");
- $("dashboardSubjects").querySelectorAll("[data-subject]").forEach(el=>el.onclick=()=>{showScreen("attendance");openSubject(el.dataset.subject);});
- $("sgpa").value=data.gpa?.sgpa??"";$("cgpa").value=data.gpa?.cgpa??"";
+/* DASHBOARD */
+
+function renderDashboard() {
+  const {subjects,total}=calculate(Object.values(data.days));
+
+  $("todayLabel").textContent=new Date().toLocaleDateString(undefined,{
+    weekday:"long",day:"numeric",month:"long",year:"numeric"
+  });
+
+  $("dashPercent").textContent=showPercent(total.present,total.held);
+  $("dashPresent").textContent=total.present;
+  $("dashHeld").textContent=total.held;
+
+  $("dashboardSubjects").innerHTML=SUBJECTS.map(s=>{
+    const x=subjects[s.name];
+    const p=percent(x.present,x.total);
+
+    return `
+      <div class="subject clickable" data-subject="${escapeHTML(s.name)}">
+        <div class="subject-head">
+          <span>${escapeHTML(s.name)}</span>
+          <span class="badge">${x.held} / ${s.total} held</span>
+        </div>
+        <div class="muted">
+          ${x.present} present · ${x.absent} absent ·
+          ${p.toFixed(2)}% of target
+        </div>
+        <div class="progress">
+          <span style="width:${Math.min(100,p)}%"></span>
+        </div>
+      </div>`;
+  }).join("");
+
+  $("dashboardSubjects").querySelectorAll("[data-subject]").forEach(el=>{
+    el.onclick=()=>{
+      showScreen("attendance");
+      openSubject(el.dataset.subject);
+    };
+  });
+
+  $("sgpa").value=data.gpa?.sgpa??"";
+  $("cgpa").value=data.gpa?.cgpa??"";
 }
-$("saveGpa").onclick=()=>{const a=$("sgpa").value,b=$("cgpa").value;if((a!==""&&(Number(a)<0||Number(a)>10))||(b!==""&&(Number(b)<0||Number(b)>10)))return notify("SGPA and CGPA must be between 0 and 10.",true);data.gpa={sgpa:a===""?null:Number(a),cgpa:b===""?null:Number(b)};saveData();};
-function renderMonth(){
- const y=reportMonth.getFullYear(),m=reportMonth.getMonth();$("monthName").textContent=reportMonth.toLocaleDateString("en-US",{month:"long",year:"numeric"});
- const entries=Object.entries(data.days).filter(([date])=>{const d=new Date(date+"T12:00:00");return d.getFullYear()===y&&d.getMonth()===m;}).sort(([a],[b])=>a.localeCompare(b));
- const {total}=calculate(entries.map(x=>x[1]));$("monthHeld").textContent=total.held;$("monthPresent").textContent=total.present;$("monthAbsent").textContent=total.absent;$("monthPercent").textContent=showPercent(total.present,total.held);
- $("monthRecords").innerHTML=entries.map(([date,day])=>{const c=calculate([day]).total,label=day.type==="holiday"?"Holiday":day.type==="saturday"?"Special Saturday":"Working day";return `<div class="day-card"><div class="subject-head"><strong>${new Date(date+"T12:00:00").toLocaleDateString("en-US",{weekday:"short",day:"numeric",month:"short"})}</strong><span class="badge">${label}</span></div><small>${day.type==="holiday"?escapeHTML(day.reason||"Holiday"):`${c.present} present · ${c.absent} absent · ${c.notheld} not held`}</small></div>`;}).join("")||'<div class="empty">No saved records for this month.</div>';
+
+$("saveGpa").onclick=()=>{
+  const a=$("sgpa").value;
+  const b=$("cgpa").value;
+
+  if((a!==""&&(Number(a)<0||Number(a)>10))||
+     (b!==""&&(Number(b)<0||Number(b)>10))) {
+    return notify("SGPA and CGPA must be between 0 and 10.",true);
+  }
+
+  data.gpa={
+    sgpa:a===""?null:Number(a),
+    cgpa:b===""?null:Number(b)
+  };
+
+  saveData();
+};
+
+/* MONTHLY REPORTS */
+
+function renderMonth() {
+  const y=reportMonth.getFullYear();
+  const m=reportMonth.getMonth();
+
+  $("monthName").textContent=
+    reportMonth.toLocaleDateString("en-US",{month:"long",year:"numeric"});
+
+  const entries=Object.entries(data.days)
+    .filter(([date])=>{
+      const d=new Date(date+"T12:00:00");
+      return d.getFullYear()===y&&d.getMonth()===m;
+    })
+    .sort(([a],[b])=>a.localeCompare(b));
+
+  const {total}=calculate(entries.map(x=>x[1]));
+
+  $("monthHeld").textContent=total.held;
+  $("monthPresent").textContent=total.present;
+  $("monthAbsent").textContent=total.absent;
+  $("monthPercent").textContent=showPercent(total.present,total.held);
+
+  $("monthRecords").innerHTML=entries.map(([date,day])=>{
+    const c=calculate([day]).total;
+
+    const label=day.type==="holiday"?"Holiday":
+      day.type==="saturday"?"Special Saturday":"Working day";
+
+    return `
+      <div class="day-card">
+        <div class="subject-head">
+          <strong>${new Date(date+"T12:00:00").toLocaleDateString(
+            "en-US",{weekday:"short",day:"numeric",month:"short"}
+          )}</strong>
+          <span class="badge">${label}</span>
+        </div>
+        <small>${
+          day.type==="holiday"?
+          escapeHTML(day.reason||"Holiday"):
+          `${c.present} present · ${c.absent} absent · ${c.notheld} not held`
+        }</small>
+      </div>`;
+  }).join("")||'<div class="empty">No saved records for this month.</div>';
 }
-$("previousMonth").onclick=()=>{reportMonth.setMonth(reportMonth.getMonth()-1);if(reportMonth<new Date(2026,7,1))reportMonth=new Date(2026,7,1);renderMonth();};
-$("nextMonth").onclick=()=>{reportMonth.setMonth(reportMonth.getMonth()+1);if(reportMonth>new Date(2026,10,1))reportMonth=new Date(2026,10,1);renderMonth();};
-function renderTargets(){const {subjects}=calculate(Object.values(data.days));$("targetRows").innerHTML=SUBJECTS.map(s=>{const x=subjects[s.name];return `<tr><td>${escapeHTML(s.name)}</td><td>${s.total}</td><td>${x.held}</td><td>${x.present}</td></tr>`;}).join("");$("storageInfo").textContent=Object.keys(data.days).length+" saved dates · Browser storage key: "+KEY;}
-$("export").onclick=()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="jilan-attendance-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);notify("JSON backup exported.");};
-$("import").onclick=async()=>{const file=$("importFile").files[0];if(!file)return notify("Choose a JSON file first.",true);try{const imported=JSON.parse(await file.text());if(!imported.days)throw new Error("This JSON does not contain attendance days.");data=normalizeData(imported);saveData(false);refreshAll();loadEntry();notify("Backup imported. Existing imported attendance is retained.");}catch(e){notify("Import failed: "+e.message,true);}};
-function refreshAll(){renderDashboard();renderAttendance();renderMonth();renderTargets();}
+
+$("previousMonth").onclick=()=>{
+  reportMonth.setMonth(reportMonth.getMonth()-1);
+
+  if(reportMonth<new Date(2026,7,1)) {
+    reportMonth=new Date(2026,7,1);
+  }
+
+  renderMonth();
+};
+
+$("nextMonth").onclick=()=>{
+  reportMonth.setMonth(reportMonth.getMonth()+1);
+
+  if(reportMonth>new Date(2026,10,1)) {
+    reportMonth=new Date(2026,10,1);
+  }
+
+  renderMonth();
+};
+
+/* TARGETS AND BACKUP */
+
+function renderTargets() {
+  const {subjects}=calculate(Object.values(data.days));
+
+  $("targetRows").innerHTML=SUBJECTS.map(s=>{
+    const x=subjects[s.name];
+
+    return `
+      <tr>
+        <td>${escapeHTML(s.name)}</td>
+        <td>${s.total}</td>
+        <td>${x.held}</td>
+        <td>${x.present}</td>
+      </tr>`;
+  }).join("");
+
+  $("storageInfo").textContent=
+    Object.keys(data.days).length+" saved dates · Browser storage key: "+KEY;
+}
+
+$("export").onclick=()=>{
+  const blob=new Blob(
+    [JSON.stringify(data,null,2)],
+    {type:"application/json"}
+  );
+
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+
+  a.href=url;
+  a.download="jilan-attendance-backup.json";
+  a.click();
+
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  notify("JSON backup exported.");
+};
+
+$("import").onclick=async()=>{
+  const file=$("importFile").files[0];
+
+  if(!file) return notify("Choose a JSON file first.",true);
+
+  try {
+    const imported=JSON.parse(await file.text());
+
+    if(!imported.days) {
+      throw new Error("This JSON does not contain attendance days.");
+    }
+
+    data=normalizeData(imported);
+    saveData(false);
+    refreshAll();
+    loadEntry();
+
+    notify("Backup imported. Existing attendance is retained.");
+  } catch(e) {
+    notify("Import failed: "+e.message,true);
+  }
+};
+
+function refreshAll() {
+  renderDashboard();
+  renderAttendance();
+  renderMonth();
+  renderTargets();
+}
+
+/* START APPLICATION */
+
 loadData();
-const firstDate=$("date").value,stored=data.days[firstDate];$("daytype").value=stored?.type||(isWeekend(firstDate)?"holiday":"working");
-loadEntry();refreshAll();
+
+const firstDate=$("date").value;
+const stored=data.days[firstDate];
+
+$("daytype").value=stored?.type||
+  (isWeekend(firstDate)?"holiday":"working");
+
+loadEntry();
+refreshAll();
+
 </script>
-</body>
-</html>
+  
+ 
