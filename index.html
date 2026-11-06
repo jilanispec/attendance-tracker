@@ -53,6 +53,60 @@ th,td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line)}th{co
 .status.P{background:#15533f;color:#9ff2cf}.status.A{background:#572b38;color:#ffc1c7}.status.N{background:#3a485d;color:#d3deeb}
 .empty{padding:18px;text-align:center;color:var(--muted);font-size:13px}
 @media(max-width:560px){header{padding:17px 13px 8px}main{padding:5px 9px}.panel{padding:12px}h1{font-size:23px}.grid{grid-template-columns:1fr}}
+
+  
+/* Subject change popup */
+.edit-subject {
+  width:auto;
+  margin:0;
+  padding:5px 9px;
+  background:#263953;
+  color:#a9caff;
+  border:1px solid #405878;
+  border-radius:8px;
+  font-size:13px;
+}
+
+.modal-overlay {
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:2000;
+  background:#000b;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+
+.modal-overlay.open {
+  display:flex;
+  animation:appear .2s ease;
+}
+
+.modal-box {
+  width:100%;
+  max-width:400px;
+  max-height:85vh;
+  overflow-y:auto;
+  background:#17263d;
+  border:1px solid #405574;
+  border-radius:18px;
+  padding:20px;
+  box-shadow:0 20px 60px #0008;
+}
+
+.modal-box h2 {
+  margin:0 0 7px;
+}
+
+.modal-actions {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:16px;
+}
+  
+
 </style>
 </head>
 <body>
@@ -139,6 +193,38 @@ th,td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line)}th{co
   <button class="nav-item" data-screen="reports"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 9h18M8 13h3M8 17h7"/></svg><span>Reports</span></button>
   <button class="nav-item" data-screen="more"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.6.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.6-.9l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.9l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.6-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.6.9l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.9z"/></svg><span>More</span></button>
 </nav>
+
+  
+
+<div class="modal-overlay" id="subjectModal">
+  <div class="modal-box">
+    <h2>Change subject</h2>
+    <p class="muted" id="modalPeriod">Period 1</p>
+
+    <label for="replacementSubject">Select replacement subject</label>
+    <select id="replacementSubject">
+      <option value="Maths">Maths</option>
+      <option value="Chemistry">Chemistry</option>
+      <option value="Chemistry Lab">Chemistry Lab</option>
+      <option value="PSC">PSC</option>
+      <option value="PSC Lab">PSC Lab</option>
+      <option value="Biology">Biology</option>
+      <option value="English">English</option>
+      <option value="DT">DT</option>
+      <option value="ES">ES</option>
+      <option value="IE">IE</option>
+    </select>
+
+    <label for="replacementHours">Hours</label>
+    <input id="replacementHours" type="number"
+      min="0.25" max="12" step="0.25" value="1">
+
+    <div class="modal-actions">
+      <button class="secondary" id="cancelSubject">Cancel</button>
+      <button class="primary" id="confirmSubject">Confirm</button>
+    </div>
+  </div>
+</div>
 
 <script>
 "use strict";
