@@ -594,3 +594,502 @@
 
 </body>
 </html>
+
+/* ============================================
+   JILAN ATTENDANCE 2.0
+   NEON RED + PREMIUM ANIMATIONS
+============================================ */
+
+:root {
+  --bg: #08060b;
+  --panel: #160d17;
+  --panel2: #21101d;
+  --line: #49202f;
+  --text: #f8f5f7;
+  --muted: #b9a6b0;
+  --blue: #ff4569;
+  --green: #35d6a0;
+  --red: #ff4569;
+  --gold: #f2c36b;
+
+  --neon: #ff1744;
+  --neon2: #ff4569;
+}
+
+/* BACKGROUND */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 10% 0%, #3a0b20, transparent 40%),
+    radial-gradient(ellipse at 100% 30%, #260b1c, transparent 35%),
+    #08060b;
+}
+
+/* PANELS */
+
+.panel {
+  background: linear-gradient(
+    145deg,
+    #230f1d,
+    #100911
+  );
+
+  border-color: #542238;
+
+  box-shadow:
+    0 12px 32px #0006,
+    inset 0 1px 0 #ff78920c;
+
+  transition:
+    border-color .3s ease,
+    box-shadow .3s ease,
+    transform .3s ease;
+}
+
+.panel:hover {
+  border-color: #a52c50;
+  box-shadow: 0 12px 30px #ff17441c;
+}
+
+/* STAT CARDS */
+
+.stat,
+.subject,
+.day-card {
+  background: linear-gradient(
+    145deg,
+    #1d1020,
+    #100b16
+  );
+
+  border-color: #482036;
+
+  transition:
+    transform .25s ease,
+    border-color .25s ease,
+    box-shadow .25s ease;
+}
+
+.subject.clickable:hover,
+.day-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--neon2);
+  box-shadow: 0 8px 22px #ff174422;
+}
+
+/* BUTTONS */
+
+button {
+  transition:
+    transform .2s ease,
+    box-shadow .25s ease,
+    background .25s ease,
+    border-color .25s ease;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:active {
+  transform: scale(.96);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--neon2);
+  outline-offset: 3px;
+}
+
+.primary {
+  background: linear-gradient(
+    110deg,
+    #ff1744,
+    #ff4569,
+    #d90b42
+  );
+
+  color: white;
+  border: 1px solid #ff6683;
+
+  box-shadow: 0 5px 18px #ff174433;
+}
+
+.primary:hover {
+  box-shadow: 0 7px 25px #ff174455;
+  filter: brightness(1.1);
+}
+
+.secondary {
+  background: linear-gradient(
+    145deg,
+    #321526,
+    #21101d
+  );
+
+  border-color: #633047;
+}
+
+.danger {
+  background: #501a2b;
+  border-color: #87314b;
+}
+
+/* SCREEN TRANSITIONS */
+
+.screen.active {
+  animation: screenEnter .4s cubic-bezier(.2,.75,.25,1);
+}
+
+@keyframes screenEnter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* PANEL ENTRANCE */
+
+.screen.active > .panel,
+.screen.active > div > .panel {
+  animation: panelEnter .45s ease both;
+}
+
+.screen.active > .panel:nth-child(2),
+.screen.active > div > .panel:nth-child(2) {
+  animation-delay: 60ms;
+}
+
+.screen.active > .panel:nth-child(3),
+.screen.active > div > .panel:nth-child(3) {
+  animation-delay: 110ms;
+}
+
+@keyframes panelEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ============================================
+   PREMIUM BOTTOM NAVIGATION
+============================================ */
+
+.bottom-nav {
+  background: rgba(12,7,14,.9);
+  border-top: 1px solid #58243a;
+
+  box-shadow: 0 -8px 28px #0005;
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.nav-item {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  border-radius: 13px;
+
+  color: #a994a3;
+
+  transition:
+    color .25s ease,
+    transform .25s ease;
+}
+
+/* Active background */
+
+.nav-item::before {
+  content: "";
+
+  position: absolute;
+  z-index: -1;
+
+  inset: 3px 8px;
+
+  border-radius: 12px;
+
+  background: linear-gradient(
+    135deg,
+    #ff17442b,
+    #ff45690d
+  );
+
+  border: 1px solid transparent;
+
+  opacity: 0;
+  transform: scale(.78);
+
+  transition:
+    opacity .28s ease,
+    transform .32s cubic-bezier(.2,.8,.2,1),
+    border-color .28s ease;
+}
+
+/* Active button */
+
+.nav-item.active {
+  color: white;
+  background: transparent;
+
+  text-shadow: 0 0 12px #ff4569a8;
+}
+
+.nav-item.active::before {
+  opacity: 1;
+  transform: scale(1);
+
+  border-color: #ff45694d;
+
+  box-shadow:
+    inset 0 0 16px #ff17441c,
+    0 0 16px #ff174426;
+}
+
+/* Icon animation */
+
+.nav-item svg {
+  transition:
+    transform .32s cubic-bezier(.2,.8,.2,1),
+    filter .3s ease;
+}
+
+.nav-item.active svg {
+  transform: translateY(-3px) scale(1.12);
+
+  filter: drop-shadow(0 0 6px #ff4569);
+
+  animation: navPop .38s ease both;
+}
+
+@keyframes navPop {
+  0% {
+    transform: translateY(2px) scale(.82);
+  }
+
+  65% {
+    transform: translateY(-5px) scale(1.17);
+  }
+
+  100% {
+    transform: translateY(-3px) scale(1.12);
+  }
+}
+
+/* ============================================
+   ATTENDANCE PROGRESS BARS
+============================================ */
+
+.progress {
+  background: #352033;
+}
+
+.progress span {
+  background: linear-gradient(
+    90deg,
+    #ff1744,
+    #ff6683
+  );
+
+  transform-origin: left center;
+
+  animation: progressFill .85s ease both;
+
+  box-shadow: 0 0 9px #ff174455;
+}
+
+@keyframes progressFill {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* SUBJECT CARDS */
+
+#sessions .subject,
+#subjectReports .subject,
+#dashboardSubjects .subject,
+#monthRecords .day-card {
+  animation: rowEnter .35s ease both;
+}
+
+#sessions .subject:nth-child(2),
+#dashboardSubjects .subject:nth-child(2),
+#subjectReports .subject:nth-child(2) {
+  animation-delay: 40ms;
+}
+
+#sessions .subject:nth-child(3),
+#dashboardSubjects .subject:nth-child(3),
+#subjectReports .subject:nth-child(3) {
+  animation-delay: 80ms;
+}
+
+@keyframes rowEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* PRESENT / ABSENT BUTTONS */
+
+.choices button.selected-p {
+  background: linear-gradient(135deg,#11694e,#15966b);
+  border-color: #35d6a0;
+  box-shadow: 0 0 12px #35d6a033;
+}
+
+.choices button.selected-a {
+  background: linear-gradient(135deg,#861d3b,#c3244d);
+  border-color: #ff4569;
+  box-shadow: 0 0 12px #ff174433;
+}
+
+.choices button.selected-n {
+  background: #3b2b40;
+  border-color: #927c99;
+}
+
+/* MODAL ANIMATION */
+
+.modal-overlay.open {
+  animation: overlayIn .22s ease both;
+}
+
+.modal-box {
+  border-color: #78304b;
+
+  box-shadow:
+    0 22px 70px #000b,
+    0 0 24px #ff17441a;
+
+  animation: modalIn .3s cubic-bezier(.2,.8,.2,1) both;
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* NOTIFICATIONS */
+
+#message {
+  border: 1px solid #28795e;
+  box-shadow: 0 8px 24px #0005;
+
+  animation: toastIn .32s ease both;
+}
+
+#message.error {
+  border-color: #a83a56;
+  box-shadow: 0 8px 24px #0005;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(-9px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* SELECTED CALCULATION MODE */
+
+.pill-row .chosen {
+  background: linear-gradient(110deg,#ff1744,#ff4569);
+  color: white;
+  box-shadow: 0 4px 15px #ff174433;
+}
+
+/* BADGES */
+
+.badge {
+  background: #3a172a;
+  color: #ffc1d0;
+}
+
+.edit-subject {
+  background: #35172a;
+  border-color: #71304a;
+  color: #ff9bb0;
+}
+
+/* MOBILE OPTIMIZATION */
+
+@media(max-width:560px) {
+  .panel:hover,
+  .subject.clickable:hover,
+  .day-card:hover {
+    transform: none;
+  }
+
+  .bottom-nav {
+    padding-top: 7px;
+  }
+
+  .nav-item::before {
+    inset: 2px 3px;
+  }
+}
+
+/* ACCESSIBILITY */
+
+@media(prefers-reduced-motion:reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+
