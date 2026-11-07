@@ -1,12 +1,17 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#08060b">
-<title>Jilan Attendance</title>
+
+<title>Jilan Attendance Tracker</title>
+
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <header>
@@ -16,208 +21,574 @@
 </header>
 
 <main>
+
 <div id="message"></div>
 
+<!-- DASHBOARD -->
+
 <section id="dashboard" class="screen active">
+
   <div class="panel">
+
     <h2>Academic Dashboard</h2>
+
     <p class="muted" id="todayLabel"></p>
+
     <div class="stats">
-      <div class="stat"><small>Overall attendance</small><strong id="dashPercent">—</strong></div>
-      <div class="stat"><small>Classes attended</small><strong id="dashPresent">0</strong></div>
-      <div class="stat"><small>Classes held</small><strong id="dashHeld">0</strong></div>
-      <div class="stat"><small>Subjects</small><strong id="dashSubjects">10</strong></div>
+
+      <div class="stat">
+        <small>Overall attendance</small>
+        <strong id="dashPercent">—</strong>
+      </div>
+
+      <div class="stat">
+        <small>Classes attended</small>
+        <strong id="dashPresent">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Classes held</small>
+        <strong id="dashHeld">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Subjects</small>
+        <strong id="dashSubjects">10</strong>
+      </div>
+
     </div>
+
   </div>
 
-  <div class="panel">
-    <h2>Academic Performance</h2>
-    <div class="grid">
-      <div><label>SGPA</label><input id="sgpa" type="number" min="0" max="10" step=".01"></div>
-      <div><label>CGPA</label><input id="cgpa" type="number" min="0" max="10" step=".01"></div>
+
+  <!-- LIVE CLASS TRACKER -->
+
+  <div class="panel live-tracker" id="liveTracker">
+
+    <div class="live-header">
+
+      <h2>Class Schedule</h2>
+
+      <span class="live-indicator">
+        <span class="live-dot"></span>
+        LIVE
+      </span>
+
     </div>
-    <button class="primary" id="saveGpa">Save GPA</button>
-    <p class="muted">Enter your official result values. GPA is not calculated automatically.</p>
+
+    <div class="live-class-card" id="liveClassCard">
+
+      <span class="class-status" id="liveClassStatus">
+        WAITING
+      </span>
+
+      <h3 id="liveSubject">
+        Checking timetable...
+      </h3>
+
+      <p class="muted" id="livePeriod">
+        Please wait
+      </p>
+
+      <div class="live-time" id="liveTime"></div>
+
+      <div class="live-progress" id="liveProgressWrap">
+        <span id="liveProgress"></span>
+      </div>
+
+      <p class="muted" id="liveCountdown">
+        Loading class schedule...
+      </p>
+
+    </div>
+
   </div>
 
+
+  <!-- SUBJECT PROGRESS -->
+
   <div class="panel">
+
     <h2>Subject Progress</h2>
-    <p class="muted">Tap a subject to see its attendance records.</p>
+
+    <p class="muted">
+      Tap a subject to open its date-by-date,
+      period-by-period attendance.
+    </p>
+
     <div id="dashboardSubjects"></div>
+
   </div>
+
+  <!-- GPA compatibility for existing app.js -->
+  <div hidden aria-hidden="true">
+    <input id="sgpa" type="number">
+    <input id="cgpa" type="number">
+    <button id="saveGpa" type="button">Save GPA</button>
+  </div>
+
 </section>
 
+
+<!-- DAILY ATTENDANCE ENTRY -->
+
 <section id="entry" class="screen">
+
   <div class="panel">
+
     <h2>Daily Attendance Entry</h2>
+
     <label>Attendance date</label>
-    <input id="date" type="date" min="2026-08-10" max="2026-11-30">
+
+    <input
+      id="date"
+      type="date"
+      min="2026-08-10"
+      max="2026-11-30"
+    >
 
     <label>Day type</label>
+
     <select id="daytype">
-      <option value="working">Weekday working day</option>
-      <option value="saturday">Special Saturday working</option>
-      <option value="holiday">Holiday</option>
+
+      <option value="working">
+        Weekday working day
+      </option>
+
+      <option value="saturday">
+        Special Saturday working
+      </option>
+
+      <option value="holiday">
+        Holiday
+      </option>
+
     </select>
 
     <div id="weekdayWrap" style="display:none">
+
       <label>Saturday timetable</label>
+
       <select id="weekday">
-        <option>Monday</option><option>Tuesday</option>
-        <option>Wednesday</option><option>Thursday</option>
+
+        <option>Monday</option>
+        <option>Tuesday</option>
+        <option>Wednesday</option>
+        <option>Thursday</option>
         <option>Friday</option>
+
       </select>
+
     </div>
 
     <div id="holidayWrap" style="display:none">
+
       <label>Holiday reason</label>
-      <input id="holidayReason" maxlength="60" placeholder="University holiday">
+
+      <input
+        id="holidayReason"
+        maxlength="60"
+        placeholder="University holiday"
+      >
+
     </div>
 
-    <p class="muted">P = Present, A = Absent, N = Not Held.</p>
+    <p class="muted">
+      P = Present, A = Absent, N = Not Held.
+      Not Held is excluded from conducted-class totals.
+    </p>
+
     <div id="sessions"></div>
-    <button class="primary" id="saveDay">Save Attendance</button>
-    <button class="secondary" id="clearDay" style="margin-top:8px">Clear This Date</button>
+
+    <button class="primary" id="saveDay">
+      Save attendance
+    </button>
+
+    <button
+      class="secondary"
+      id="clearDay"
+      style="margin-top:8px"
+    >
+      Clear this date
+    </button>
+
   </div>
+
 </section>
 
+
+<!-- ATTENDANCE -->
+
 <section id="attendance" class="screen">
+
   <div id="attendanceOverview">
+
     <div class="panel">
+
       <h2>Attendance Percentage</h2>
+
       <div class="stat">
+
         <small>Overall percentage</small>
+
         <strong id="overallPercent">—</strong>
+
       </div>
 
       <div class="stats" style="margin-top:9px">
-        <div class="stat"><small>Total periods held</small><strong id="totalHeld">0</strong></div>
-        <div class="stat"><small>Present</small><strong id="totalPresent">0</strong></div>
-        <div class="stat"><small>Absent</small><strong id="totalAbsent">0</strong></div>
-        <div class="stat"><small>Not Held</small><strong id="totalNotHeld">0</strong></div>
+
+        <div class="stat">
+          <small>Total periods held</small>
+          <strong id="totalHeld">0</strong>
+        </div>
+
+        <div class="stat">
+          <small>Present</small>
+          <strong id="totalPresent">0</strong>
+        </div>
+
+        <div class="stat">
+          <small>Absent</small>
+          <strong id="totalAbsent">0</strong>
+        </div>
+
+        <div class="stat">
+          <small>Not Held</small>
+          <strong id="totalNotHeld">0</strong>
+        </div>
+
       </div>
 
       <label>Percentage calculation</label>
+
       <div class="pill-row">
-        <button id="heldButton" class="chosen">Held %</button>
-        <button id="overallButton" class="secondary">Semester Target %</button>
+
+        <button id="heldButton" class="chosen">
+          Held %
+        </button>
+
+        <button id="overallButton" class="secondary">
+          Semester target %
+        </button>
+
       </div>
+
       <p class="muted" id="formula"></p>
+
     </div>
+
 
     <div class="panel">
+
       <div class="grid">
-        <h2>Subject-wise Attendance</h2>
+
+        <h2>Subject-wise attendance</h2>
+
         <select id="sort">
-          <option value="asc">Lowest to highest</option>
-          <option value="desc">Highest to lowest</option>
+
+          <option value="asc">
+            Lowest to highest
+          </option>
+
+          <option value="desc">
+            Highest to lowest
+          </option>
+
         </select>
+
       </div>
-      <p class="muted">Select a subject to see its saved records.</p>
+
+      <p class="muted">
+        Select any subject to see every saved date
+        and its individual periods.
+      </p>
+
       <div id="subjectReports"></div>
+
     </div>
+
   </div>
 
-  <div id="subjectDetail" class="panel" style="display:none">
+
+  <!-- SUBJECT DETAILS -->
+
+  <div
+    id="subjectDetail"
+    class="panel"
+    style="display:none"
+  >
+
     <div class="detail-top">
-      <button class="secondary" id="backSubjects">‹ Back</button>
+
+      <button class="secondary" id="backSubjects">
+        ‹ Back
+      </button>
+
       <div>
-        <h2 id="detailName" style="margin:0">Subject</h2>
+
+        <h2 id="detailName" style="margin:0">
+          Subject
+        </h2>
+
         <div class="muted" id="detailSummary"></div>
+
       </div>
+
     </div>
+
 
     <div class="stats" style="margin-bottom:12px">
-      <div class="stat"><small>Present</small><strong id="detailP">0</strong></div>
-      <div class="stat"><small>Absent</small><strong id="detailA">0</strong></div>
-      <div class="stat"><small>Not Held</small><strong id="detailN">0</strong></div>
-      <div class="stat"><small>Attendance</small><strong id="detailPct">—</strong></div>
+
+      <div class="stat">
+        <small>Present</small>
+        <strong id="detailP">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Absent</small>
+        <strong id="detailA">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Not Held</small>
+        <strong id="detailN">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Attendance</small>
+        <strong id="detailPct">—</strong>
+      </div>
+
     </div>
-    <p class="muted">Date-by-date attendance records.</p>
+
+    <p class="muted">
+      Each row shows the date, weekday, period number,
+      class time and saved status.
+    </p>
+
     <div id="subjectDateRecords"></div>
+
   </div>
+
 </section>
+
+
+<!-- MONTHLY REPORTS -->
 
 <section id="reports" class="screen">
+
   <div class="panel">
+
     <h2>Monthly Reports</h2>
+
     <div class="monthbar">
-      <button class="secondary" id="previousMonth">‹</button>
+
+      <button class="secondary" id="previousMonth">
+        ‹
+      </button>
+
       <strong id="monthName">August 2026</strong>
-      <button class="secondary" id="nextMonth">›</button>
+
+      <button class="secondary" id="nextMonth">
+        ›
+      </button>
+
     </div>
+
 
     <div class="stats" style="margin-top:12px">
-      <div class="stat"><small>Held</small><strong id="monthHeld">0</strong></div>
-      <div class="stat"><small>Present</small><strong id="monthPresent">0</strong></div>
-      <div class="stat"><small>Absent</small><strong id="monthAbsent">0</strong></div>
-      <div class="stat"><small>Held attendance</small><strong id="monthPercent">—</strong></div>
+
+      <div class="stat">
+        <small>Held</small>
+        <strong id="monthHeld">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Present</small>
+        <strong id="monthPresent">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Absent</small>
+        <strong id="monthAbsent">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Held attendance</small>
+        <strong id="monthPercent">—</strong>
+      </div>
+
     </div>
 
-    <h3>Saved Daily Records</h3>
+    <h3>Saved daily records</h3>
+
     <div id="monthRecords"></div>
+
   </div>
+
 </section>
+
+
+<!-- MORE / SETTINGS -->
 
 <section id="more" class="screen">
-  <div class="panel">
-    <h2>Semester Subject Targets</h2>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Subject</th><th>Target sessions</th><th>Held</th><th>Present</th></tr>
-        </thead>
-        <tbody id="targetRows"></tbody>
-      </table>
-    </div>
-  </div>
 
   <div class="panel">
-    <h2>Backup & Restore</h2>
-    <p class="muted">Attendance is saved in this browser. Export a JSON backup regularly.</p>
-    <button class="primary" id="export">Export Attendance JSON</button>
-    <label>Import JSON backup</label>
-    <input id="importFile" type="file" accept=".json,application/json">
-    <button class="secondary" id="import" style="margin-top:8px">Import Backup</button>
-    <p class="muted" id="storageInfo"></p>
+
+    <h2>Semester Subject Targets</h2>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Subject</th>
+            <th>Target sessions</th>
+            <th>Held</th>
+            <th>Present</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="targetRows"></tbody>
+
+      </table>
+
+    </div>
+
   </div>
+
+
+  <!-- BACKUP AND RESTORE -->
+
+  <div class="panel">
+
+    <h2>Backup & Restore</h2>
+
+    <p class="muted">
+      Attendance is saved in this browser.
+      Export a JSON backup regularly.
+      Importing replaces the current browser data
+      with the selected backup.
+    </p>
+
+    <button class="primary" id="export">
+      Export attendance JSON
+    </button>
+
+    <label>Import JSON backup</label>
+
+    <input
+      id="importFile"
+      type="file"
+      accept=".json,application/json"
+    >
+
+    <button
+      class="secondary"
+      id="import"
+      style="margin-top:8px"
+    >
+      Import backup
+    </button>
+
+    <p class="muted" id="storageInfo"></p>
+
+  </div>
+
 </section>
+
 </main>
 
+
+<!-- BOTTOM NAVIGATION -->
+
 <nav class="bottom-nav">
+
   <button class="nav-item" data-screen="entry">
-    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+
+    <svg viewBox="0 0 24 24">
+      <rect x="3" y="5" width="18" height="16" rx="2"/>
+      <path d="M16 3v4M8 3v4M3 10h18"/>
+    </svg>
+
     <span>Daily Entry</span>
+
   </button>
+
 
   <button class="nav-item" data-screen="attendance">
-    <svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h17"/><path d="m7 15 4-4 3 2 6-7"/></svg>
+
+    <svg viewBox="0 0 24 24">
+      <path d="M4 19V5M4 19h17"/>
+      <path d="m7 15 4-4 3 2 6-7"/>
+    </svg>
+
     <span>Attendance</span>
+
   </button>
 
-  <button class="nav-item active" data-screen="dashboard">
-    <svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1z"/></svg>
+
+  <button
+    class="nav-item active"
+    data-screen="dashboard"
+  >
+
+    <svg viewBox="0 0 24 24">
+      <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1z"/>
+    </svg>
+
     <span>Dashboard</span>
+
   </button>
+
 
   <button class="nav-item" data-screen="reports">
-    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 9h18M8 13h3M8 17h7"/></svg>
+
+    <svg viewBox="0 0 24 24">
+      <rect x="3" y="4" width="18" height="17" rx="2"/>
+      <path d="M16 2v4M8 2v4M3 9h18M8 13h3M8 17h7"/>
+    </svg>
+
     <span>Reports</span>
+
   </button>
+
 
   <button class="nav-item" data-screen="more">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.6.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.6-.9l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.9l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.6-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.6.9l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.9z"/></svg>
+
+    <svg viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.6.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.6-.9l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.9l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.6-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.6.9l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.9z"/>
+    </svg>
+
     <span>More</span>
+
   </button>
+
 </nav>
 
-<div class="modal-overlay" id="subjectModal">
-  <div class="modal-box">
-    <h2>Change Subject</h2>
-    <p class="muted" id="modalPeriod">Period 1</p>
 
-    <label for="replacementSubject">Select replacement subject</label>
+<!-- CHANGE SUBJECT MODAL -->
+
+<div class="modal-overlay" id="subjectModal">
+
+  <div class="modal-box">
+
+    <h2>Change subject</h2>
+
+    <p class="muted" id="modalPeriod">
+      Period 1
+    </p>
+
+    <label for="replacementSubject">
+      Select replacement subject
+    </label>
+
     <select id="replacementSubject">
+
       <option value="Maths">Maths</option>
       <option value="Chemistry">Chemistry</option>
       <option value="Chemistry Lab">Chemistry Lab</option>
@@ -228,18 +599,44 @@
       <option value="DT">DT</option>
       <option value="ES">ES</option>
       <option value="IE">IE</option>
+
     </select>
 
-    <label for="replacementHours">Hours</label>
-    <input id="replacementHours" type="number" min=".25" max="12" step=".25" value="1">
+
+    <label for="replacementHours">
+      Hours
+    </label>
+
+    <input
+      id="replacementHours"
+      type="number"
+      min="0.25"
+      max="12"
+      step="0.25"
+      value="1"
+    >
+
 
     <div class="modal-actions">
-      <button class="secondary" id="cancelSubject">Cancel</button>
-      <button class="primary" id="confirmSubject">Confirm</button>
+
+      <button class="secondary" id="cancelSubject">
+        Cancel
+      </button>
+
+      <button class="primary" id="confirmSubject">
+        Confirm
+      </button>
+
     </div>
+
   </div>
+
 </div>
 
+
+<!-- JAVASCRIPT -->
+
 <script src="app.js"></script>
+
 </body>
 </html>
