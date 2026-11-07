@@ -1,3 +1,4 @@
+
 "use strict";
 
 /* =========================================
@@ -39,7 +40,18 @@ const PERIOD_TIMES = [
   "2:45–3:35 PM"
 ];
 
-/* Existing browser data takes priority over this starter data. */
+/* Timings in minutes after midnight */
+
+const LIVE_PERIODS = [
+  {start:480,end:530},
+  {start:535,end:585},
+  {start:590,end:640},
+  {start:645,end:695},
+  {start:765,end:815},
+  {start:825,end:875},
+  {start:885,end:935}
+];
+
 const SEED = {
   semester:{start:START,end:END},
   subjects:SUBJECTS,
@@ -74,10 +86,17 @@ function escapeHTML(value) {
 
 function notify(text,error=false) {
   const box=$("message");
+  if(!box) return;
+
   box.textContent=text;
   box.className=error?"error":"";
   box.style.display="block";
-  setTimeout(()=>box.style.display="none",3500);
+
+  clearTimeout(box._timer);
+
+  box._timer=setTimeout(()=>{
+    box.style.display="none";
+  },3500);
 }
 
 function weekdayName(date) {
@@ -449,6 +468,8 @@ function saveDay() {
   refreshAll();
 
   notify("Attendance saved for "+date+".");
+
+  renderLiveTracker();
 }
 
 function clearDay() {
@@ -471,6 +492,7 @@ function clearDay() {
   saveData(false);
   loadEntry();
   refreshAll();
+  renderLiveTracker();
 
   notify("Date cleared. No attendance sessions were generated.");
 }
@@ -578,7 +600,6 @@ function showPercent(a,b) {
   Present / Semester target × 100
 
   Not Held is excluded from Held %.
-  Both modes are capped at 100%.
 */
 
 function selectedPercent(s) {
@@ -792,6 +813,8 @@ function renderDashboard() {
   $("dashPresent").textContent=total.present;
   $("dashHeld").textContent=total.held;
 
+  $("dashSubjects").textContent=SUBJECTS.length;
+
   $("dashboardSubjects").innerHTML=SUBJECTS.map(s=>{
     const x=subjects[s.name];
     const p=percent(x.present,x.total);
@@ -825,6 +848,7 @@ function renderDashboard() {
       };
     });
 
+  /* Keep old GPA values for compatibility */
   $("sgpa").value=data.gpa?.sgpa??"";
   $("cgpa").value=data.gpa?.cgpa??"";
 }
@@ -1012,6 +1036,7 @@ $("import").onclick=async()=>{
     saveData(false);
     refreshAll();
     loadEntry();
+    renderLiveTracker();
 
     notify("Backup imported successfully.");
 
@@ -1022,7 +1047,197 @@ $("import").onclick=async()=>{
 
 
 /* =========================================
-   17. REFRESH ALL SCREENS
+   17. LIVE CLASS TRACKER
+========================================= */
+
+/*
+  Displays only ONE class card.
+
+  Priority:
+  1. Ongoing class
+  2. Next upcoming class
+  3. No scheduled classes
+
+  The timetable is read from TIMETABLE.
+  Saved Saturday timetable selections are respected.
+  Saved date-specific subject changes are respected.
+*/
+
+function formatClock(minutes) {
+  const h=Math.floor(minutes/60);
+  const m=minutes%60;
+
+  return String(h).padStart(2,"0")+":"+
+         String(m).padStart(2,"0");
+}
+
+function getLiveSessions(date) {
+  const day=data.days[date];
+
+  if(day?.type==="holiday") {
+    return [];
+  }
+
+  /*
+    Saved attendance sessions take priority.
+    This also preserves manually changed subjects.
+  */
+
+  if(day && Array.isArray(day.sessions)) {
+    return day.sessions;
+  }
+
+  const weekday=weekdayName(date);
+
+  if(TIMETABLE[weekday]) {
+    return makeSessions(date,"working");
+  }
+
+  /*
+    Saturday only uses a timetable when the user
+    has saved a special Saturday timetable.
+  */
+
+  if(day?.type==="saturday") {
+    return day.sessions||[];
+  }
+
+  return [];
+}
+
+function renderLiveTracker() {
+  const card=$("liveClassCard");
+
+  if(!card||!data) return;
+
+  const now=new Date();
+
+  const date=
+    now.getFullYear()+"-"+
+    String(now.getMonth()+1).padStart(2,"0")+"-"+
+    String(now.getDate()).padStart(2,"0");
+
+  const current=
+    now.getHours()*60+now.getMinutes();
+
+  const sessions=getLiveSessions(date);
+
+  const periods=sessions.map(s=>{
+    const index=Number(s.period)-1;
+    const timing=LIVE_PERIODS[index];
+
+    if(!timing) return null;
+
+    return {
+      ...s,
+      start:timing.start,
+      end:timing.end
+    };
+  }).filter(Boolean);
+
+  const ongoing=periods.find(p=>
+    current>=p.start && current<p.end
+  );
+
+  const upcoming=periods.find(p=>
+    p.start>current
+  );
+
+  const status=$("liveClassStatus");
+  const subject=$("liveSubject");
+  const period=$("livePeriod");
+  const time=$("liveTime");
+  const countdown=$("liveCountdown");
+  const progressWrap=$("liveProgressWrap");
+  const progress=$("liveProgress");
+
+  let selected=null;
+
+  if(ongoing) {
+
+    selected=ongoing;
+
+    status.textContent="ONGOING CLASS";
+
+    const elapsed=current-ongoing.start;
+    const duration=ongoing.end-ongoing.start;
+    const remaining=ongoing.end-current;
+
+    const percentage=Math.min(
+      100,
+      Math.max(0,(elapsed/duration)*100)
+    );
+
+    progressWrap.style.display="block";
+    progress.style.width=percentage+"%";
+
+    countdown.textContent=
+      remaining===1
+        ? "1 minute remaining"
+        : remaining+" minutes remaining";
+
+    card.classList.add("is-ongoing");
+
+  } else if(upcoming) {
+
+    selected=upcoming;
+
+    status.textContent="NEXT CLASS";
+
+    const difference=upcoming.start-current;
+
+    progressWrap.style.display="none";
+    progress.style.width="0%";
+
+    if(difference<60) {
+      countdown.textContent=
+        "Starts in "+difference+" minutes";
+    } else {
+      countdown.textContent=
+        "Starts in "+
+        Math.floor(difference/60)+"h "+
+        (difference%60)+"m";
+    }
+
+    card.classList.remove("is-ongoing");
+
+  } else {
+
+    status.textContent="NO CLASS";
+
+    subject.textContent="No scheduled classes";
+
+    period.textContent=
+      data.days[date]?.type==="holiday"
+        ? "Today is a holiday"
+        : "No more scheduled classes today";
+
+    time.textContent="";
+
+    countdown.textContent=
+      "Enjoy your free time!";
+
+    progressWrap.style.display="none";
+    progress.style.width="0%";
+
+    card.classList.remove("is-ongoing");
+
+    return;
+  }
+
+  subject.textContent=selected.subject;
+
+  period.textContent=
+    "Period "+selected.period;
+
+  time.textContent=
+    formatClock(selected.start)+" – "+
+    formatClock(selected.end);
+}
+
+
+/* =========================================
+   18. REFRESH ALL SCREENS
 ========================================= */
 
 function refreshAll() {
@@ -1030,11 +1245,12 @@ function refreshAll() {
   renderAttendance();
   renderMonth();
   renderTargets();
+  renderLiveTracker();
 }
 
 
 /* =========================================
-   18. START APPLICATION
+   19. START APPLICATION
 ========================================= */
 
 loadData();
@@ -1046,4 +1262,19 @@ $("daytype").value=stored?.type||
   (isWeekend(firstDate)?"holiday":"working");
 
 loadEntry();
+
 refreshAll();
+
+/* Update live class status every second */
+
+renderLiveTracker();
+
+setInterval(renderLiveTracker,1000);
+
+/* Refresh when user returns to the browser */
+
+document.addEventListener("visibilitychange",()=>{
+  if(!document.hidden) {
+    renderLiveTracker();
+  }
+});
