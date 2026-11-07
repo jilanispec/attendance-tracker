@@ -683,20 +683,16 @@ function calculate(days) {
   return {subjects,total};
 }
 
-function percent(a,b) {
-  return b?100*a/b:0;
+function percent(a,b){
+  return b ? Math.min(100, (100*a)/b) : 0;
+}
+function showPercent(a,b){
+  return b ? percent(a,b).toFixed(2)+"%" : "—";
 }
 
-function showPercent(a,b) {
-  return b?percent(a,b).toFixed(2)+"%":"—";
+function selectedPercent(s){
+  return showPercent(s.present,s.total);
 }
-
-function selectedPercent(s) {
-  return percentageMode==="held"?
-    showPercent(s.present,s.held):
-    showPercent(s.present,s.total);
-}
-
 function showAttendanceOverview() {
   $("attendanceOverview").style.display="block";
   $("subjectDetail").style.display="none";
@@ -705,34 +701,23 @@ function showAttendanceOverview() {
 function renderAttendance() {
   const {subjects,total}=calculate(Object.values(data.days));
 
-  $("overallPercent").textContent=
-    percentageMode==="held"?
-    showPercent(total.present,total.held):
-    showPercent(total.present,total.target);
+  $("overallPercent").textContent=showPercent(total.present,total.target);
 
   $("totalHeld").textContent=total.held;
   $("totalPresent").textContent=total.present;
   $("totalAbsent").textContent=total.absent;
   $("totalNotHeld").textContent=total.notheld;
 
-  $("formula").textContent=percentageMode==="held"?
-    "Held % = Present ÷ (Present + Absent) × 100.":
-    "Semester target % = Present ÷ subject semester target × 100.";
-
+  $("formula").textContent="Held % = Present ÷ Total Classes (Settings) × 100. Maximum = 100%.";
   const list=Object.values(subjects).sort((a,b)=>{
-    const pa=percentageMode==="held"?
-      percent(a.present,a.held):percent(a.present,a.total);
-
-    const pb=percentageMode==="held"?
-      percent(b.present,b.held):percent(b.present,b.total);
+    const pa=percent(a.present,a.total);
+    const pb=percent(b.present,b.total);
 
     return $("sort").value==="asc"?pa-pb:pb-pa;
-  });
+});
 
   $("subjectReports").innerHTML=list.map(s=>{
-    const p=percentageMode==="held"?
-      percent(s.present,s.held):percent(s.present,s.total);
-
+    const p=percent(s.present,s.total);
     return `
       <div class="subject clickable" role="button" tabindex="0"
         data-subject="${escapeHTML(s.name)}">
@@ -785,7 +770,7 @@ function openSubject(name) {
   const counts={P:0,A:0,N:0};
   all.forEach(x=>counts[x.s.status]++);
 
-  const held=counts.P+counts.A;
+  const totalClasses=SUBJECTS.find(s=>s.name===name).total;
 
   $("detailName").textContent=name;
   $("detailSummary").textContent=
@@ -796,7 +781,7 @@ function openSubject(name) {
   $("detailP").textContent=counts.P;
   $("detailA").textContent=counts.A;
   $("detailN").textContent=counts.N;
-  $("detailPct").textContent=showPercent(counts.P,held);
+  $("detailPct").textContent=showPercent(counts.P,totalClasses);
 
   $("subjectDateRecords").innerHTML=all.length?
     all.map(({date,s})=>`
