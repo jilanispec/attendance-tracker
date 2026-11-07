@@ -7,6 +7,8 @@
 
 const START = "2026-08-10";
 const END = "2026-11-30";
+
+/* DO NOT CHANGE: preserves existing attendance data */
 const KEY = "jilan_attendance_json_v1";
 
 const SUBJECTS = [
@@ -40,8 +42,6 @@ const PERIOD_TIMES = [
   "2:45–3:35 PM"
 ];
 
-/* Timings in minutes after midnight */
-
 const LIVE_PERIODS = [
   {start:480,end:530},
   {start:535,end:585},
@@ -67,7 +67,7 @@ let selectedSubject = null;
 let editingIndex = null;
 
 const $ = id => document.getElementById(id);
-const clone = x => JSON.parse(JSON.stringify(x));
+const clone = value => JSON.parse(JSON.stringify(value));
 
 
 /* =========================================
@@ -106,8 +106,8 @@ function weekdayName(date) {
 }
 
 function isWeekend(date) {
-  const d=new Date(date+"T12:00:00").getDay();
-  return d===0||d===6;
+  const day=new Date(date+"T12:00:00").getDay();
+  return day===0||day===6;
 }
 
 function blankData() {
@@ -149,9 +149,7 @@ function normalizeData(input) {
         ? s.status
         : "N",
       optional:!!s.optional,
-      hours:Number(s.hours)>0
-        ? Number(s.hours)
-        : 1
+      hours:Number(s.hours)>0?Number(s.hours):1
     }));
 
     if(!["working","saturday","holiday"].includes(day.type)) {
@@ -172,18 +170,14 @@ function normalizeData(input) {
 
 
 /* =========================================
-   3. SAVE AND LOAD DATA
+   3. SAVE AND LOAD
 ========================================= */
 
 function loadData() {
   try {
     const saved=localStorage.getItem(KEY);
-
-    data=normalizeData(
-      saved ? JSON.parse(saved) : clone(SEED)
-    );
-
-  } catch(e) {
+    data=normalizeData(saved?JSON.parse(saved):clone(SEED));
+  } catch(error) {
     data=normalizeData(clone(SEED));
     notify("Could not read saved data. Check your backup.",true);
   }
@@ -192,20 +186,21 @@ function loadData() {
 }
 
 function saveData(show=true) {
-  localStorage.setItem(KEY,JSON.stringify(data));
-
-  if(show) {
-    notify("Attendance saved in this browser.");
+  try {
+    localStorage.setItem(KEY,JSON.stringify(data));
+    if(show) notify("Attendance saved in this browser.");
+  } catch(error) {
+    notify("Could not save data. Browser storage may be full.",true);
   }
 }
 
 function validDate(date) {
-  return date&&date>=START&&date<=END;
+  return !!date&&date>=START&&date<=END;
 }
 
 
 /* =========================================
-   4. TIMETABLE SESSION GENERATION
+   4. TIMETABLE GENERATION
 ========================================= */
 
 function makeSessions(date,type,rep) {
@@ -215,9 +210,9 @@ function makeSessions(date,type,rep) {
     ? (rep||"Monday")
     : weekdayName(date);
 
-  return (TIMETABLE[day]||[]).map((subject,i)=>({
-    period:i+1,
-    subject:subject||(i===1?"Free period":"Mentoring"),
+  return (TIMETABLE[day]||[]).map((subject,index)=>({
+    period:index+1,
+    subject:subject||(index===1?"Free period":"Mentoring"),
     status:"N",
     optional:!subject,
     hours:1
@@ -230,19 +225,17 @@ function makeSessions(date,type,rep) {
 ========================================= */
 
 function showScreen(name) {
-  document.querySelectorAll(".screen").forEach(s=>{
-    s.classList.toggle("active",s.id===name);
+  document.querySelectorAll(".screen").forEach(screen=>{
+    screen.classList.toggle("active",screen.id===name);
   });
 
-  document.querySelectorAll(".nav-item").forEach(b=>{
-    b.classList.toggle("active",b.dataset.screen===name);
+  document.querySelectorAll(".nav-item").forEach(button=>{
+    button.classList.toggle("active",button.dataset.screen===name);
   });
 
   window.scrollTo({top:0,behavior:"smooth"});
 
-  if(name==="dashboard") {
-    renderDashboard();
-  }
+  if(name==="dashboard") renderDashboard();
 
   if(name==="attendance") {
     selectedSubject=null;
@@ -250,18 +243,13 @@ function showScreen(name) {
     renderAttendance();
   }
 
-  if(name==="reports") {
-    renderMonth();
-  }
-
-  if(name==="more") {
-    renderTargets();
-  }
+  if(name==="reports") renderMonth();
+  if(name==="more") renderTargets();
 }
 
-document.querySelectorAll(".nav-item").forEach(b=>{
-  b.addEventListener("click",()=>{
-    showScreen(b.dataset.screen);
+document.querySelectorAll(".nav-item").forEach(button=>{
+  button.addEventListener("click",()=>{
+    showScreen(button.dataset.screen);
   });
 });
 
@@ -296,11 +284,8 @@ function loadEntry() {
     $("holidayReason").value=old.reason||"";
   } else {
     currentSessions=makeSessions(
-      date,
-      type,
-      $("weekday").value
+      date,type,$("weekday").value
     );
-
     $("holidayReason").value="";
   }
 
@@ -317,7 +302,7 @@ function drawSessions() {
     return;
   }
 
-  currentSessions.forEach((s,index)=>{
+  currentSessions.forEach((session,index)=>{
     const card=document.createElement("div");
     card.className="subject";
 
@@ -325,7 +310,8 @@ function drawSessions() {
     title.className="subject-head";
 
     const name=document.createElement("span");
-    name.textContent=`Period ${s.period} · ${s.subject}`;
+    name.textContent=
+      `Period ${session.period} · ${session.subject}`;
 
     const edit=document.createElement("button");
     edit.type="button";
@@ -333,14 +319,13 @@ function drawSessions() {
     edit.textContent="✎ Change";
     edit.onclick=()=>openSubjectEditor(index);
 
-    title.appendChild(name);
-    title.appendChild(edit);
+    title.append(name,edit);
     card.appendChild(title);
 
     const time=document.createElement("p");
     time.className="muted";
     time.textContent=
-      `${PERIOD_TIMES[s.period-1]||"Time not set"} · ${s.hours||1} hour(s)`;
+      `${PERIOD_TIMES[session.period-1]||"Time not set"} · ${session.hours||1} hour(s)`;
 
     card.appendChild(time);
 
@@ -349,20 +334,21 @@ function drawSessions() {
 
     [["P","Present"],["A","Absent"],["N","Not Held"]]
       .forEach(([value,label])=>{
-        const b=document.createElement("button");
-        b.textContent=label;
+        const button=document.createElement("button");
+        button.type="button";
+        button.textContent=label;
 
-        b.className=s.status===value
+        button.className=session.status===value
           ? (value==="P"?"selected-p":
              value==="A"?"selected-a":"selected-n")
           : "";
 
-        b.onclick=()=>{
+        button.onclick=()=>{
           currentSessions[index].status=value;
           drawSessions();
         };
 
-        choices.appendChild(b);
+        choices.appendChild(button);
       });
 
     card.appendChild(choices);
@@ -372,24 +358,24 @@ function drawSessions() {
 
 
 /* =========================================
-   7. SUBJECT CHANGE POPUP
+   7. SUBJECT EDITOR
 ========================================= */
 
 function openSubjectEditor(index) {
   editingIndex=index;
 
-  const s=currentSessions[index];
-  if(!s) return;
+  const session=currentSessions[index];
+  if(!session) return;
 
   $("modalPeriod").textContent=
-    `Period ${s.period} · Current subject: ${s.subject}`;
+    `Period ${session.period} · Current subject: ${session.subject}`;
 
   $("replacementSubject").value=
-    SUBJECTS.some(x=>x.name===s.subject)
-      ? s.subject
+    SUBJECTS.some(s=>s.name===session.subject)
+      ? session.subject
       : "Maths";
 
-  $("replacementHours").value=s.hours||1;
+  $("replacementHours").value=session.hours||1;
 
   $("subjectModal").classList.add("open");
 }
@@ -401,8 +387,8 @@ function closeSubjectEditor() {
 
 $("cancelSubject").onclick=closeSubjectEditor;
 
-$("subjectModal").addEventListener("click",e=>{
-  if(e.target===$("subjectModal")) {
+$("subjectModal").addEventListener("click",event=>{
+  if(event.target===$("subjectModal")) {
     closeSubjectEditor();
   }
 });
@@ -413,7 +399,7 @@ $("confirmSubject").onclick=()=>{
   const subject=$("replacementSubject").value;
   const hours=Number($("replacementHours").value);
 
-  if(!SUBJECTS.some(x=>x.name===subject)) {
+  if(!SUBJECTS.some(s=>s.name===subject)) {
     notify("Choose a valid subject.",true);
     return;
   }
@@ -435,7 +421,7 @@ $("confirmSubject").onclick=()=>{
 
 
 /* =========================================
-   8. SAVE AND CLEAR A DATE
+   8. SAVE AND CLEAR DATE
 ========================================= */
 
 function saveDay() {
@@ -457,47 +443,52 @@ function saveDay() {
   } else {
     data.days[date]={
       type,
-      weekday:type==="saturday"
-        ? $("weekday").value
-        : null,
+      weekday:type==="saturday"?$("weekday").value:null,
       sessions:clone(currentSessions)
     };
   }
 
   saveData(false);
   refreshAll();
-
   notify("Attendance saved for "+date+".");
-
-  renderLiveTracker();
 }
 
 function clearDay() {
   const date=$("date").value;
   if(!validDate(date)) return;
 
+  if(!confirm("Clear all attendance entries for "+date+"?")) return;
+
   if(isWeekend(date)) {
-    data.days[date]={
-      type:"holiday",
-      sessions:[]
-    };
+    data.days[date]={type:"holiday",sessions:[]};
   } else {
-    data.days[date]={
-      type:"working",
-      weekday:null,
-      sessions:[]
-    };
+    data.days[date]={type:"working",weekday:null,sessions:[]};
   }
 
   saveData(false);
   loadEntry();
   refreshAll();
-  renderLiveTracker();
 
-  notify("Date cleared. No attendance sessions were generated.");
+  notify("Date cleared.");
 }
 
-$("date").value="2026-11-05";
+function getTodayDate() {
+  const now=new Date();
+  return [
+    now.getFullYear(),
+    String(now.getMonth()+1).padStart(2,"0"),
+    String(now.getDate()).padStart(2,"0")
+  ].join("-");
+}
+
+function getInitialDate() {
+  const today=getTodayDate();
+  if(today<START) return START;
+  if(today>END) return END;
+  return today;
+}
+
+$("date").value=getInitialDate();
 
 $("date").onchange=()=>{
   const date=$("date").value;
@@ -513,11 +504,8 @@ $("daytype").onchange=loadEntry;
 
 $("weekday").onchange=()=>{
   currentSessions=makeSessions(
-    $("date").value,
-    "saturday",
-    $("weekday").value
+    $("date").value,"saturday",$("weekday").value
   );
-
   drawSessions();
 };
 
@@ -532,9 +520,9 @@ $("clearDay").onclick=clearDay;
 function calculate(days) {
   const subjects={};
 
-  SUBJECTS.forEach(s=>{
-    subjects[s.name]={
-      ...s,
+  SUBJECTS.forEach(subject=>{
+    subjects[subject.name]={
+      ...subject,
       held:0,
       present:0,
       absent:0,
@@ -545,67 +533,53 @@ function calculate(days) {
   for(const day of days) {
     if(!day||day.type==="holiday") continue;
 
-    for(const s of day.sessions||[]) {
-      const item=subjects[s.subject];
+    for(const session of day.sessions||[]) {
+      const item=subjects[session.subject];
 
-      if(!item||s.optional) continue;
+      if(!item||session.optional) continue;
 
-      if(s.status==="P") {
+      if(session.status==="P") {
         item.held++;
         item.present++;
-      } else if(s.status==="A") {
+      } else if(session.status==="A") {
         item.held++;
         item.absent++;
-      } else if(s.status==="N") {
+      } else if(session.status==="N") {
         item.notheld++;
       }
     }
   }
 
-  const total=Object.values(subjects).reduce((a,s)=>({
-    held:a.held+s.held,
-    present:a.present+s.present,
-    absent:a.absent+s.absent,
-    notheld:a.notheld+s.notheld,
-    target:a.target+s.total
+  const total=Object.values(subjects).reduce((result,subject)=>({
+    held:result.held+subject.held,
+    present:result.present+subject.present,
+    absent:result.absent+subject.absent,
+    notheld:result.notheld+subject.notheld,
+    target:result.target+subject.total
   }),{
-    held:0,
-    present:0,
-    absent:0,
-    notheld:0,
-    target:0
+    held:0,present:0,absent:0,notheld:0,target:0
   });
 
   return {subjects,total};
 }
 
 function percent(a,b) {
-  return b ? Math.min(100,(100*a)/b) : 0;
+  return b?Math.min(100,(100*a)/b):0;
 }
 
 function showPercent(a,b) {
-  return b ? percent(a,b).toFixed(2)+"%" : "—";
+  return b?percent(a,b).toFixed(2)+"%":"—";
 }
 
 
 /* =========================================
-   10. TWO PERCENTAGE MODES
+   10. PERCENTAGE MODES
 ========================================= */
 
-/*
-  HELD %:
-  Present / (Present + Absent) × 100
-
-  SEMESTER TARGET %:
-  Present / Semester target × 100
-
-  Not Held is excluded from Held %.
-*/
-
-function selectedPercent(s) {
+function selectedPercent(subject) {
   return percentageMode==="held"
-    ? showPercent(s.present,s.held)
-    : showPercent(s.present,s.total);
+    ? showPercent(subject.present,subject.held)
+    : showPercent(subject.present,subject.total);
 }
 
 function showAttendanceOverview() {
@@ -640,30 +614,28 @@ function renderAttendance() {
       ? percent(b.present,b.held)
       : percent(b.present,b.total);
 
-    return $("sort").value==="asc"
-      ? pa-pb
-      : pb-pa;
+    return $("sort").value==="asc"?pa-pb:pb-pa;
   });
 
-  $("subjectReports").innerHTML=list.map(s=>{
+  $("subjectReports").innerHTML=list.map(subject=>{
     const p=percentageMode==="held"
-      ? percent(s.present,s.held)
-      : percent(s.present,s.total);
+      ? percent(subject.present,subject.held)
+      : percent(subject.present,subject.total);
 
     return `
       <div class="subject clickable"
         role="button"
         tabindex="0"
-        data-subject="${escapeHTML(s.name)}">
+        data-subject="${escapeHTML(subject.name)}">
 
         <div class="subject-head">
-          <span>${escapeHTML(s.name)}</span>
-          <strong>${selectedPercent(s)}</strong>
+          <span>${escapeHTML(subject.name)}</span>
+          <strong>${selectedPercent(subject)}</strong>
         </div>
 
         <div class="muted">
-          ${s.present} present · ${s.absent} absent ·
-          ${s.held} held · target ${s.total}
+          ${subject.present} present · ${subject.absent} absent ·
+          ${subject.held} held · target ${subject.total}
         </div>
 
         <div class="progress">
@@ -674,14 +646,14 @@ function renderAttendance() {
   }).join("");
 
   $("subjectReports").querySelectorAll("[data-subject]")
-    .forEach(el=>{
-      const open=()=>openSubject(el.dataset.subject);
+    .forEach(element=>{
+      const open=()=>openSubject(element.dataset.subject);
 
-      el.addEventListener("click",open);
+      element.addEventListener("click",open);
 
-      el.addEventListener("keydown",e=>{
-        if(e.key==="Enter"||e.key===" ") {
-          e.preventDefault();
+      element.addEventListener("keydown",event=>{
+        if(event.key==="Enter"||event.key===" ") {
+          event.preventDefault();
           open();
         }
       });
@@ -694,7 +666,7 @@ function renderAttendance() {
 
 
 /* =========================================
-   11. SUBJECT DATE-BY-DATE DETAIL
+   11. SUBJECT DETAILS
 ========================================= */
 
 function openSubject(name) {
@@ -711,18 +683,19 @@ function openSubject(name) {
       if(day.type==="holiday") return;
 
       (day.sessions||[])
-        .filter(s=>s.subject===name&&!s.optional)
-        .forEach(s=>all.push({date,day,s}));
+        .filter(session=>
+          session.subject===name&&!session.optional
+        )
+        .forEach(session=>all.push({date,session}));
     });
 
   const counts={P:0,A:0,N:0};
-  all.forEach(x=>counts[x.s.status]++);
+  all.forEach(item=>counts[item.session.status]++);
 
   const held=counts.P+counts.A;
   const target=SUBJECTS.find(s=>s.name===name).total;
 
   $("detailName").textContent=name;
-
   $("detailSummary").textContent=
     `${all.length} saved period entries · Semester target ${target}`;
 
@@ -736,7 +709,7 @@ function openSubject(name) {
       : showPercent(counts.P,target);
 
   $("subjectDateRecords").innerHTML=all.length
-    ? all.map(({date,s})=>`
+    ? all.map(({date,session})=>`
       <div class="record-line">
         <div>
           <strong>${new Date(date+"T12:00:00").toLocaleDateString(
@@ -750,13 +723,13 @@ function openSubject(name) {
           )}</strong>
 
           <div class="record-meta">
-            Period ${s.period} ·
-            ${escapeHTML(PERIOD_TIMES[s.period-1]||"Time not set")}
-            · ${s.hours||1} hour(s)
+            Period ${session.period} ·
+            ${escapeHTML(PERIOD_TIMES[session.period-1]||"Time not set")}
+            · ${session.hours||1} hour(s)
           </div>
         </div>
 
-        <span class="status ${s.status}">${s.status}</span>
+        <span class="status ${session.status}">${session.status}</span>
       </div>
     `).join("")
     : '<div class="empty">No saved attendance entries for this subject yet.</div>';
@@ -771,19 +744,15 @@ $("backSubjects").onclick=()=>{
 
 $("heldButton").onclick=()=>{
   percentageMode="held";
-
   $("heldButton").className="chosen";
   $("overallButton").className="secondary";
-
   renderAttendance();
 };
 
 $("overallButton").onclick=()=>{
   percentageMode="overall";
-
   $("overallButton").className="chosen";
   $("heldButton").className="secondary";
-
   renderAttendance();
 };
 
@@ -807,29 +776,26 @@ function renderDashboard() {
     }
   );
 
-  $("dashPercent").textContent=
-    showPercent(total.present,total.held);
-
+  $("dashPercent").textContent=showPercent(total.present,total.held);
   $("dashPresent").textContent=total.present;
   $("dashHeld").textContent=total.held;
-
   $("dashSubjects").textContent=SUBJECTS.length;
 
-  $("dashboardSubjects").innerHTML=SUBJECTS.map(s=>{
-    const x=subjects[s.name];
-    const p=percent(x.present,x.total);
+  $("dashboardSubjects").innerHTML=SUBJECTS.map(subject=>{
+    const item=subjects[subject.name];
+    const p=percent(item.present,subject.total);
 
     return `
       <div class="subject clickable"
-        data-subject="${escapeHTML(s.name)}">
+        data-subject="${escapeHTML(subject.name)}">
 
         <div class="subject-head">
-          <span>${escapeHTML(s.name)}</span>
-          <span class="badge">${x.held} / ${s.total} held</span>
+          <span>${escapeHTML(subject.name)}</span>
+          <span class="badge">${item.held} / ${subject.total} held</span>
         </div>
 
         <div class="muted">
-          ${x.present} present · ${x.absent} absent ·
+          ${item.present} present · ${item.absent} absent ·
           ${p.toFixed(2)}% of target
         </div>
 
@@ -841,14 +807,13 @@ function renderDashboard() {
   }).join("");
 
   $("dashboardSubjects").querySelectorAll("[data-subject]")
-    .forEach(el=>{
-      el.onclick=()=>{
+    .forEach(element=>{
+      element.onclick=()=>{
         showScreen("attendance");
-        openSubject(el.dataset.subject);
+        openSubject(element.dataset.subject);
       };
     });
 
-  /* Keep old GPA values for compatibility */
   $("sgpa").value=data.gpa?.sgpa??"";
   $("cgpa").value=data.gpa?.cgpa??"";
 }
@@ -878,34 +843,30 @@ $("saveGpa").onclick=()=>{
 ========================================= */
 
 function renderMonth() {
-  const y=reportMonth.getFullYear();
-  const m=reportMonth.getMonth();
+  const year=reportMonth.getFullYear();
+  const month=reportMonth.getMonth();
 
   $("monthName").textContent=
     reportMonth.toLocaleDateString(
-      "en-US",
-      {month:"long",year:"numeric"}
+      "en-US",{month:"long",year:"numeric"}
     );
 
   const entries=Object.entries(data.days)
     .filter(([date])=>{
       const d=new Date(date+"T12:00:00");
-
-      return d.getFullYear()===y&&d.getMonth()===m;
+      return d.getFullYear()===year&&d.getMonth()===month;
     })
     .sort(([a],[b])=>a.localeCompare(b));
 
-  const {total}=calculate(entries.map(x=>x[1]));
+  const {total}=calculate(entries.map(entry=>entry[1]));
 
   $("monthHeld").textContent=total.held;
   $("monthPresent").textContent=total.present;
   $("monthAbsent").textContent=total.absent;
-
-  $("monthPercent").textContent=
-    showPercent(total.present,total.held);
+  $("monthPercent").textContent=showPercent(total.present,total.held);
 
   $("monthRecords").innerHTML=entries.map(([date,day])=>{
-    const c=calculate([day]).total;
+    const counts=calculate([day]).total;
 
     const label=day.type==="holiday"
       ? "Holiday"
@@ -918,13 +879,8 @@ function renderMonth() {
         <div class="subject-head">
           <strong>${new Date(date+"T12:00:00").toLocaleDateString(
             "en-US",
-            {
-              weekday:"short",
-              day:"numeric",
-              month:"short"
-            }
+            {weekday:"short",day:"numeric",month:"short"}
           )}</strong>
-
           <span class="badge">${label}</span>
         </div>
 
@@ -932,7 +888,7 @@ function renderMonth() {
           ${
             day.type==="holiday"
               ? escapeHTML(day.reason||"Holiday")
-              : `${c.present} present · ${c.absent} absent · ${c.notheld} not held`
+              : `${counts.present} present · ${counts.absent} absent · ${counts.notheld} not held`
           }
         </small>
       </div>
@@ -943,21 +899,17 @@ function renderMonth() {
 
 $("previousMonth").onclick=()=>{
   reportMonth.setMonth(reportMonth.getMonth()-1);
-
   if(reportMonth<new Date(2026,7,1)) {
     reportMonth=new Date(2026,7,1);
   }
-
   renderMonth();
 };
 
 $("nextMonth").onclick=()=>{
   reportMonth.setMonth(reportMonth.getMonth()+1);
-
   if(reportMonth>new Date(2026,10,1)) {
     reportMonth=new Date(2026,10,1);
   }
-
   renderMonth();
 };
 
@@ -969,15 +921,15 @@ $("nextMonth").onclick=()=>{
 function renderTargets() {
   const {subjects}=calculate(Object.values(data.days));
 
-  $("targetRows").innerHTML=SUBJECTS.map(s=>{
-    const x=subjects[s.name];
+  $("targetRows").innerHTML=SUBJECTS.map(subject=>{
+    const item=subjects[subject.name];
 
     return `
       <tr>
-        <td>${escapeHTML(s.name)}</td>
-        <td>${s.total}</td>
-        <td>${x.held}</td>
-        <td>${x.present}</td>
+        <td>${escapeHTML(subject.name)}</td>
+        <td>${subject.total}</td>
+        <td>${item.held}</td>
+        <td>${item.present}</td>
       </tr>
     `;
   }).join("");
@@ -999,15 +951,14 @@ $("export").onclick=()=>{
   );
 
   const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
+  const anchor=document.createElement("a");
 
-  a.href=url;
-  a.download="jilan-attendance-backup.json";
-  a.click();
+  anchor.href=url;
+  anchor.download="self-attendance-backup.json";
+  anchor.click();
 
   setTimeout(()=>URL.revokeObjectURL(url),1000);
-
-  notify("JSON backup exported.");
+  notify("SELF ATTENDANCE backup exported.");
 };
 
 
@@ -1022,26 +973,26 @@ $("import").onclick=async()=>{
     return notify("Choose a JSON file first.",true);
   }
 
+  if(!confirm("Importing will replace the attendance data in this browser. Continue?")) {
+    return;
+  }
+
   try {
     const imported=JSON.parse(await file.text());
 
     if(!imported.days) {
-      throw new Error(
-        "This JSON does not contain attendance days."
-      );
+      throw new Error("This JSON does not contain attendance days.");
     }
 
     data=normalizeData(imported);
-
     saveData(false);
     refreshAll();
     loadEntry();
-    renderLiveTracker();
 
     notify("Backup imported successfully.");
 
-  } catch(e) {
-    notify("Import failed: "+e.message,true);
+  } catch(error) {
+    notify("Import failed: "+error.message,true);
   }
 };
 
@@ -1050,40 +1001,22 @@ $("import").onclick=async()=>{
    17. LIVE CLASS TRACKER
 ========================================= */
 
-/*
-  Displays only ONE class card.
-
-  Priority:
-  1. Ongoing class
-  2. Next upcoming class
-  3. No scheduled classes
-
-  The timetable is read from TIMETABLE.
-  Saved Saturday timetable selections are respected.
-  Saved date-specific subject changes are respected.
-*/
-
 function formatClock(minutes) {
-  const h=Math.floor(minutes/60);
-  const m=minutes%60;
+  const hour=Math.floor(minutes/60);
+  const minute=minutes%60;
 
-  return String(h).padStart(2,"0")+":"+
-         String(m).padStart(2,"0");
+  const suffix=hour>=12?"PM":"AM";
+  const displayHour=hour%12||12;
+
+  return `${displayHour}:${String(minute).padStart(2,"0")} ${suffix}`;
 }
 
 function getLiveSessions(date) {
   const day=data.days[date];
 
-  if(day?.type==="holiday") {
-    return [];
-  }
+  if(day?.type==="holiday") return [];
 
-  /*
-    Saved attendance sessions take priority.
-    This also preserves manually changed subjects.
-  */
-
-  if(day && Array.isArray(day.sessions)) {
+  if(day&&Array.isArray(day.sessions)) {
     return day.sessions;
   }
 
@@ -1092,11 +1025,6 @@ function getLiveSessions(date) {
   if(TIMETABLE[weekday]) {
     return makeSessions(date,"working");
   }
-
-  /*
-    Saturday only uses a timetable when the user
-    has saved a special Saturday timetable.
-  */
 
   if(day?.type==="saturday") {
     return day.sessions||[];
@@ -1107,36 +1035,40 @@ function getLiveSessions(date) {
 
 function renderLiveTracker() {
   const card=$("liveClassCard");
-
   if(!card||!data) return;
 
   const now=new Date();
 
-  const date=
-    now.getFullYear()+"-"+
-    String(now.getMonth()+1).padStart(2,"0")+"-"+
-    String(now.getDate()).padStart(2,"0");
+  const date=[
+    now.getFullYear(),
+    String(now.getMonth()+1).padStart(2,"0"),
+    String(now.getDate()).padStart(2,"0")
+  ].join("-");
 
-  const current=
-    now.getHours()*60+now.getMinutes();
+  const current=now.getHours()*60+now.getMinutes();
 
   const sessions=getLiveSessions(date);
 
-  const periods=sessions.map(s=>{
-    const index=Number(s.period)-1;
+  /* Skip free periods and mentoring periods */
+  const periods=sessions.map(session=>{
+    const index=Number(session.period)-1;
     const timing=LIVE_PERIODS[index];
 
-    if(!timing) return null;
+    if(!timing||session.optional) return null;
+
+    if(!SUBJECTS.some(subject=>subject.name===session.subject)) {
+      return null;
+    }
 
     return {
-      ...s,
+      ...session,
       start:timing.start,
       end:timing.end
     };
-  }).filter(Boolean);
+  }).filter(Boolean).sort((a,b)=>a.start-b.start);
 
   const ongoing=periods.find(p=>
-    current>=p.start && current<p.end
+    current>=p.start&&current<p.end
   );
 
   const upcoming=periods.find(p=>
@@ -1154,7 +1086,6 @@ function renderLiveTracker() {
   let selected=null;
 
   if(ongoing) {
-
     selected=ongoing;
 
     status.textContent="ONGOING CLASS";
@@ -1163,23 +1094,17 @@ function renderLiveTracker() {
     const duration=ongoing.end-ongoing.start;
     const remaining=ongoing.end-current;
 
-    const percentage=Math.min(
-      100,
-      Math.max(0,(elapsed/duration)*100)
-    );
-
     progressWrap.style.display="block";
-    progress.style.width=percentage+"%";
+    progress.style.width=
+      Math.min(100,Math.max(0,(elapsed/duration)*100))+"%";
 
     countdown.textContent=
-      remaining===1
-        ? "1 minute remaining"
-        : remaining+" minutes remaining";
+      remaining===1?"1 minute remaining":
+      remaining+" minutes remaining";
 
     card.classList.add("is-ongoing");
 
   } else if(upcoming) {
-
     selected=upcoming;
 
     status.textContent="NEXT CLASS";
@@ -1189,22 +1114,14 @@ function renderLiveTracker() {
     progressWrap.style.display="none";
     progress.style.width="0%";
 
-    if(difference<60) {
-      countdown.textContent=
-        "Starts in "+difference+" minutes";
-    } else {
-      countdown.textContent=
-        "Starts in "+
-        Math.floor(difference/60)+"h "+
-        (difference%60)+"m";
-    }
+    countdown.textContent=difference<60
+      ? "Starts in "+difference+" minutes"
+      : "Starts in "+Math.floor(difference/60)+"h "+(difference%60)+"m";
 
     card.classList.remove("is-ongoing");
 
   } else {
-
     status.textContent="NO CLASS";
-
     subject.textContent="No scheduled classes";
 
     period.textContent=
@@ -1213,26 +1130,20 @@ function renderLiveTracker() {
         : "No more scheduled classes today";
 
     time.textContent="";
-
-    countdown.textContent=
-      "Enjoy your free time!";
+    countdown.textContent="Enjoy your free time!";
 
     progressWrap.style.display="none";
     progress.style.width="0%";
 
     card.classList.remove("is-ongoing");
-
     return;
   }
 
   subject.textContent=selected.subject;
-
-  period.textContent=
-    "Period "+selected.period;
+  period.textContent="Period "+selected.period;
 
   time.textContent=
-    formatClock(selected.start)+" – "+
-    formatClock(selected.end);
+    formatClock(selected.start)+" – "+formatClock(selected.end);
 }
 
 
@@ -1255,23 +1166,20 @@ function refreshAll() {
 
 loadData();
 
-const firstDate=$("date").value;
+const firstDate=getInitialDate();
+$("date").value=firstDate;
+
 const stored=data.days[firstDate];
 
 $("daytype").value=stored?.type||
   (isWeekend(firstDate)?"holiday":"working");
 
 loadEntry();
-
 refreshAll();
-
-/* Update live class status every second */
 
 renderLiveTracker();
 
 setInterval(renderLiveTracker,1000);
-
-/* Refresh when user returns to the browser */
 
 document.addEventListener("visibilitychange",()=>{
   if(!document.hidden) {
