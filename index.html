@@ -1,208 +1,546 @@
 <!doctype html>
 <html lang="en">
+
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#101827">
+
 <title>Jilan Attendance Tracker</title>
-<style>
-:root{color-scheme:dark;--bg:#0b1220;--panel:#152238;--panel2:#1c2d46;--line:#30435f;--text:#edf3ff;--muted:#9eacc2;--blue:#8bb6ff;--green:#3bd19a;--red:#f07882;--gold:#e9bd6c}
-*{box-sizing:border-box}
-body{margin:0;padding-bottom:88px;background:radial-gradient(ellipse at top,#1a3150,#0b1220 65%);color:var(--text);font:15px system-ui,Arial,sans-serif}
-header{max-width:1000px;margin:auto;padding:22px 16px 12px}
-.eyebrow{color:var(--blue);font-size:11px;font-weight:800;letter-spacing:2px}
-h1{font-size:25px;margin:5px 0}header p{color:var(--muted);font-size:13px;margin:0}
-main{max-width:1000px;margin:auto;padding:8px 13px 20px}
-.screen{display:none}.screen.active{display:block;animation:appear .22s ease}
-@keyframes appear{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
-.panel{background:linear-gradient(145deg,#192941,#111d30);border:1px solid var(--line);border-radius:17px;padding:15px;margin:12px 0;box-shadow:0 8px 25px #0002}
-h2{font-size:17px;margin:0 0 13px}h3{font-size:14px;margin:16px 0 9px}
-label{display:block;color:var(--muted);font-size:12px;margin:10px 0 6px}
-input,select,button{font:inherit;width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:#0c1729;color:var(--text)}
-button{cursor:pointer}button:active{transform:scale(.98)}
-.primary{background:linear-gradient(135deg,#9ac1ff,#6596e8);color:#102039;border:0;font-weight:800}
-.secondary{background:#263953}.danger{background:#512b39;color:#ffe0e5}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-.stat{background:#0d192b;border:1px solid var(--line);border-radius:13px;padding:12px;min-width:0}
-.stat small{display:block;color:var(--muted);font-size:11px;margin-bottom:7px}.stat strong{font-size:22px}
-.muted{color:var(--muted);font-size:12px;line-height:1.5}
-.subject{background:#0e1a2d;border:1px solid var(--line);border-radius:13px;padding:12px;margin:9px 0}
-.subject.clickable{cursor:pointer;transition:border-color .15s,transform .15s}.subject.clickable:active{transform:scale(.99)}
-.subject-head{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:750;margin-bottom:8px}
-.badge{font-size:10px;padding:4px 7px;border-radius:20px;background:#263953;color:#c7dcff;white-space:nowrap}
-.good{color:var(--green)}.warning{color:var(--gold)}.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.choices button{font-size:12px;padding:9px 3px;background:#24344d}
-.choices button.selected-p{background:#15533f;border-color:#37bd8e}.choices button.selected-a{background:#572b38;border-color:#e16d7a}.choices button.selected-n{background:#3a485d;border-color:#8295ae}
-.progress{height:7px;background:#2a3a52;border-radius:9px;overflow:hidden;margin-top:8px}.progress span{display:block;height:100%;background:linear-gradient(90deg,#649eff,#42d1a0)}
-.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:12px;min-width:520px}
-th,td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line)}th{color:var(--muted)}
-.monthbar{display:flex;align-items:center;gap:9px}.monthbar button{width:43px;flex:0 0 43px}.monthbar strong{flex:1;text-align:center}
-.day-card{padding:12px;background:#0d192b;border:1px solid var(--line);border-radius:12px;margin:8px 0}
-.day-card small{color:var(--muted)}.pill-row{display:flex;gap:8px}.pill-row button{flex:1}.pill-row .chosen{background:var(--blue);color:#102039;font-weight:800}
-.bottom-nav{position:fixed;z-index:100;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(5,1fr);padding:8px 6px calc(8px + env(safe-area-inset-bottom));background:#0b1220ed;backdrop-filter:blur(18px);border-top:1px solid #30435f}
-.nav-item{border:0;background:transparent;color:#9eacc2;padding:5px 1px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px}
-.nav-item svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.nav-item.active{color:#a9caff}.nav-item.active svg{transform:translateY(-2px)}
-#message{display:none;padding:11px;margin:8px 0;border-radius:9px;background:#174234;color:#c5ffe9;font-size:13px}
-#message.error{background:#512b39;color:#ffe0e5}
-.detail-top{display:flex;align-items:center;gap:9px;margin-bottom:12px}.detail-top button{width:auto;min-width:86px}
-.record-line{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
-.record-line:last-child{border-bottom:0}.record-meta{color:var(--muted);font-size:12px;margin-top:4px}
-.status{font-weight:850;font-size:12px;min-width:38px;text-align:center;padding:6px 9px;border-radius:8px}
-.status.P{background:#15533f;color:#9ff2cf}.status.A{background:#572b38;color:#ffc1c7}.status.N{background:#3a485d;color:#d3deeb}
-.empty{padding:18px;text-align:center;color:var(--muted);font-size:13px}
-@media(max-width:560px){header{padding:17px 13px 8px}main{padding:5px 9px}.panel{padding:12px}h1{font-size:23px}.grid{grid-template-columns:1fr}}
 
-  
-/* Subject change popup */
-.edit-subject {
-  width:auto;
-  margin:0;
-  padding:5px 9px;
-  background:#263953;
-  color:#a9caff;
-  border:1px solid #405878;
-  border-radius:8px;
-  font-size:13px;
-}
-
-.modal-overlay {
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:2000;
-  background:#000b;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-}
-
-.modal-overlay.open {
-  display:flex;
-  animation:appear .2s ease;
-}
-
-.modal-box {
-  width:100%;
-  max-width:400px;
-  max-height:85vh;
-  overflow-y:auto;
-  background:#17263d;
-  border:1px solid #405574;
-  border-radius:18px;
-  padding:20px;
-  box-shadow:0 20px 60px #0008;
-}
-
-.modal-box h2 {
-  margin:0 0 7px;
-}
-
-.modal-actions {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px;
-  margin-top:16px;
-}
-  
-
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
 <header>
   <div class="eyebrow">PERSONAL ACADEMIC COMPANION</div>
   <h1>Jilan Attendance</h1>
   <p>Semester 1 · 10 August – 30 November 2026</p>
 </header>
+
 <main>
+
 <div id="message"></div>
 
+<!-- =================================
+     DASHBOARD
+================================== -->
+
 <section id="dashboard" class="screen active">
+
   <div class="panel">
-    <h2>Academic Dashboard</h2><p class="muted" id="todayLabel"></p>
+    <h2>Academic Dashboard</h2>
+    <p class="muted" id="todayLabel"></p>
+
     <div class="stats">
-      <div class="stat"><small>Overall attendance</small><strong id="dashPercent">—</strong></div>
-      <div class="stat"><small>Classes attended</small><strong id="dashPresent">0</strong></div>
-      <div class="stat"><small>Classes held</small><strong id="dashHeld">0</strong></div>
-      <div class="stat"><small>Subjects</small><strong id="dashSubjects">10</strong></div>
+
+      <div class="stat">
+        <small>Overall attendance</small>
+        <strong id="dashPercent">—</strong>
+      </div>
+
+      <div class="stat">
+        <small>Classes attended</small>
+        <strong id="dashPresent">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Classes held</small>
+        <strong id="dashHeld">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Subjects</small>
+        <strong id="dashSubjects">10</strong>
+      </div>
+
     </div>
   </div>
-  <div class="panel"><h2>Academic performance</h2>
-    <div class="grid"><div><label>SGPA</label><input id="sgpa" type="number" min="0" max="10" step=".01"></div><div><label>CGPA</label><input id="cgpa" type="number" min="0" max="10" step=".01"></div></div>
-    <button class="primary" id="saveGpa">Save GPA</button><p class="muted">Enter your official result values. GPA is not calculated automatically.</p>
+
+  <div class="panel">
+
+    <h2>Academic performance</h2>
+
+    <div class="grid">
+
+      <div>
+        <label>SGPA</label>
+        <input id="sgpa" type="number" min="0" max="10" step=".01">
+      </div>
+
+      <div>
+        <label>CGPA</label>
+        <input id="cgpa" type="number" min="0" max="10" step=".01">
+      </div>
+
+    </div>
+
+    <button class="primary" id="saveGpa">Save GPA</button>
+
+    <p class="muted">
+      Enter your official result values. GPA is not calculated automatically.
+    </p>
+
   </div>
-  <div class="panel"><h2>Subject progress</h2><p class="muted">Tap a subject to open its date-by-date, period-by-period attendance.</p><div id="dashboardSubjects"></div></div>
+
+  <div class="panel">
+
+    <h2>Subject progress</h2>
+
+    <p class="muted">
+      Tap a subject to open its date-by-date, period-by-period attendance.
+    </p>
+
+    <div id="dashboardSubjects"></div>
+
+  </div>
+
 </section>
+
+
+<!-- =================================
+     DAILY ATTENDANCE ENTRY
+================================== -->
 
 <section id="entry" class="screen">
+
   <div class="panel">
+
     <h2>Daily Attendance Entry</h2>
-    <label>Attendance date</label><input id="date" type="date" min="2026-08-10" max="2026-11-30">
-    <label>Day type</label><select id="daytype"><option value="working">Weekday working day</option><option value="saturday">Special Saturday working</option><option value="holiday">Holiday</option></select>
-    <div id="weekdayWrap" style="display:none"><label>Saturday timetable</label><select id="weekday"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option></select></div>
-    <div id="holidayWrap" style="display:none"><label>Holiday reason</label><input id="holidayReason" maxlength="60" placeholder="University holiday"></div>
-    <p class="muted">P = Present, A = Absent, N = Not Held. Not Held is excluded from conducted-class totals.</p>
-    <div id="sessions"></div><button class="primary" id="saveDay">Save attendance</button><button class="secondary" id="clearDay" style="margin-top:8px">Clear this date</button>
+
+    <label>Attendance date</label>
+
+    <input
+      id="date"
+      type="date"
+      min="2026-08-10"
+      max="2026-11-30"
+    >
+
+    <label>Day type</label>
+
+    <select id="daytype">
+      <option value="working">Weekday working day</option>
+      <option value="saturday">Special Saturday working</option>
+      <option value="holiday">Holiday</option>
+    </select>
+
+    <div id="weekdayWrap" style="display:none">
+
+      <label>Saturday timetable</label>
+
+      <select id="weekday">
+        <option>Monday</option>
+        <option>Tuesday</option>
+        <option>Wednesday</option>
+        <option>Thursday</option>
+        <option>Friday</option>
+      </select>
+
+    </div>
+
+    <div id="holidayWrap" style="display:none">
+
+      <label>Holiday reason</label>
+
+      <input
+        id="holidayReason"
+        maxlength="60"
+        placeholder="University holiday"
+      >
+
+    </div>
+
+    <p class="muted">
+      P = Present, A = Absent, N = Not Held.
+      Not Held is excluded from conducted-class totals.
+    </p>
+
+    <div id="sessions"></div>
+
+    <button class="primary" id="saveDay">
+      Save attendance
+    </button>
+
+    <button
+      class="secondary"
+      id="clearDay"
+      style="margin-top:8px"
+    >
+      Clear this date
+    </button>
+
   </div>
+
 </section>
+
+
+<!-- =================================
+     ATTENDANCE
+================================== -->
 
 <section id="attendance" class="screen">
+
   <div id="attendanceOverview">
+
     <div class="panel">
-      <h2>Attendance Percentage</h2><div class="stat"><small>Overall percentage</small><strong id="overallPercent">—</strong></div>
-      <div class="stats" style="margin-top:9px">
-        <div class="stat"><small>Total periods held</small><strong id="totalHeld">0</strong></div>
-        <div class="stat"><small>Present</small><strong id="totalPresent">0</strong></div>
-        <div class="stat"><small>Absent</small><strong id="totalAbsent">0</strong></div>
-        <div class="stat"><small>Not Held</small><strong id="totalNotHeld">0</strong></div>
+
+      <h2>Attendance Percentage</h2>
+
+      <div class="stat">
+        <small>Overall percentage</small>
+        <strong id="overallPercent">—</strong>
       </div>
-      <label>Percentage calculation</label><div class="pill-row"><button id="heldButton" class="chosen">Held %</button><button id="overallButton" class="secondary">Semester target %</button></div>
+
+      <div class="stats" style="margin-top:9px">
+
+        <div class="stat">
+          <small>Total periods held</small>
+          <strong id="totalHeld">0</strong>
+        </div>
+
+        <div class="stat">
+          <small>Present</small>
+          <strong id="totalPresent">0</strong>
+        </div>
+
+        <div class="stat">
+          <small>Absent</small>
+          <strong id="totalAbsent">0</strong>
+        </div>
+
+        <div class="stat">
+          <small>Not Held</small>
+          <strong id="totalNotHeld">0</strong>
+        </div>
+
+      </div>
+
+      <label>Percentage calculation</label>
+
+      <div class="pill-row">
+
+        <button id="heldButton" class="chosen">
+          Held %
+        </button>
+
+        <button id="overallButton" class="secondary">
+          Semester target %
+        </button>
+
+      </div>
+
       <p class="muted" id="formula"></p>
+
     </div>
-    <div class="panel"><div class="grid"><h2>Subject-wise attendance</h2><select id="sort"><option value="asc">Lowest to highest</option><option value="desc">Highest to lowest</option></select></div><p class="muted">Select any subject to see every saved date and its individual periods.</p><div id="subjectReports"></div></div>
+
+
+    <div class="panel">
+
+      <div class="grid">
+
+        <h2>Subject-wise attendance</h2>
+
+        <select id="sort">
+          <option value="asc">Lowest to highest</option>
+          <option value="desc">Highest to lowest</option>
+        </select>
+
+      </div>
+
+      <p class="muted">
+        Select any subject to see every saved date and its individual periods.
+      </p>
+
+      <div id="subjectReports"></div>
+
+    </div>
+
   </div>
-  <div id="subjectDetail" class="panel" style="display:none">
-    <div class="detail-top"><button class="secondary" id="backSubjects">‹ Back</button><div><h2 id="detailName" style="margin:0">Subject</h2><div class="muted" id="detailSummary"></div></div></div>
-    <div class="stats" style="margin-bottom:12px"><div class="stat"><small>Present</small><strong id="detailP">0</strong></div><div class="stat"><small>Absent</small><strong id="detailA">0</strong></div><div class="stat"><small>Not Held</small><strong id="detailN">0</strong></div><div class="stat"><small>Attendance</small><strong id="detailPct">—</strong></div></div>
-    <p class="muted">Each row shows the date, weekday, period number, class time and saved status.</p>
+
+
+  <!-- SUBJECT DETAILS -->
+
+  <div
+    id="subjectDetail"
+    class="panel"
+    style="display:none"
+  >
+
+    <div class="detail-top">
+
+      <button class="secondary" id="backSubjects">
+        ‹ Back
+      </button>
+
+      <div>
+        <h2 id="detailName" style="margin:0">
+          Subject
+        </h2>
+
+        <div class="muted" id="detailSummary"></div>
+      </div>
+
+    </div>
+
+
+    <div class="stats" style="margin-bottom:12px">
+
+      <div class="stat">
+        <small>Present</small>
+        <strong id="detailP">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Absent</small>
+        <strong id="detailA">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Not Held</small>
+        <strong id="detailN">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Attendance</small>
+        <strong id="detailPct">—</strong>
+      </div>
+
+    </div>
+
+    <p class="muted">
+      Each row shows the date, weekday, period number, class time and saved status.
+    </p>
+
     <div id="subjectDateRecords"></div>
+
   </div>
+
 </section>
+
+
+<!-- =================================
+     MONTHLY REPORTS
+================================== -->
 
 <section id="reports" class="screen">
-  <div class="panel"><h2>Monthly Reports</h2><div class="monthbar"><button class="secondary" id="previousMonth">‹</button><strong id="monthName">August 2026</strong><button class="secondary" id="nextMonth">›</button></div>
-    <div class="stats" style="margin-top:12px"><div class="stat"><small>Held</small><strong id="monthHeld">0</strong></div><div class="stat"><small>Present</small><strong id="monthPresent">0</strong></div><div class="stat"><small>Absent</small><strong id="monthAbsent">0</strong></div><div class="stat"><small>Held attendance</small><strong id="monthPercent">—</strong></div></div>
-    <h3>Saved daily records</h3><div id="monthRecords"></div>
+
+  <div class="panel">
+
+    <h2>Monthly Reports</h2>
+
+    <div class="monthbar">
+
+      <button class="secondary" id="previousMonth">
+        ‹
+      </button>
+
+      <strong id="monthName">August 2026</strong>
+
+      <button class="secondary" id="nextMonth">
+        ›
+      </button>
+
+    </div>
+
+
+    <div class="stats" style="margin-top:12px">
+
+      <div class="stat">
+        <small>Held</small>
+        <strong id="monthHeld">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Present</small>
+        <strong id="monthPresent">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Absent</small>
+        <strong id="monthAbsent">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Held attendance</small>
+        <strong id="monthPercent">—</strong>
+      </div>
+
+    </div>
+
+    <h3>Saved daily records</h3>
+
+    <div id="monthRecords"></div>
+
   </div>
+
 </section>
+
+
+<!-- =================================
+     MORE / SETTINGS
+================================== -->
 
 <section id="more" class="screen">
-  <div class="panel"><h2>Semester Subject Targets</h2><div class="table-wrap"><table><thead><tr><th>Subject</th><th>Target sessions</th><th>Held</th><th>Present</th></tr></thead><tbody id="targetRows"></tbody></table></div></div>
-  <div class="panel"><h2>Backup & Restore</h2><p class="muted">Attendance is saved in this browser. Export a JSON backup regularly. Importing replaces the current browser data with the selected backup.</p>
-    <button class="primary" id="export">Export attendance JSON</button><label>Import JSON backup</label><input id="importFile" type="file" accept=".json,application/json"><button class="secondary" id="import" style="margin-top:8px">Import backup</button>
-    <p class="muted" id="storageInfo"></p>
+
+  <div class="panel">
+
+    <h2>Semester Subject Targets</h2>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Target sessions</th>
+            <th>Held</th>
+            <th>Present</th>
+          </tr>
+        </thead>
+
+        <tbody id="targetRows"></tbody>
+
+      </table>
+
+    </div>
+
   </div>
+
+
+  <!-- BACKUP AND RESTORE -->
+
+  <div class="panel">
+
+    <h2>Backup & Restore</h2>
+
+    <p class="muted">
+      Attendance is saved in this browser.
+      Export a JSON backup regularly.
+      Importing replaces the current browser data with the selected backup.
+    </p>
+
+    <button class="primary" id="export">
+      Export attendance JSON
+    </button>
+
+    <label>Import JSON backup</label>
+
+    <input
+      id="importFile"
+      type="file"
+      accept=".json,application/json"
+    >
+
+    <button
+      class="secondary"
+      id="import"
+      style="margin-top:8px"
+    >
+      Import backup
+    </button>
+
+    <p class="muted" id="storageInfo"></p>
+
+  </div>
+
 </section>
+
 </main>
 
+
+<!-- =================================
+     BOTTOM NAVIGATION
+================================== -->
+
 <nav class="bottom-nav">
-  <button class="nav-item" data-screen="entry"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg><span>Daily Entry</span></button>
-  <button class="nav-item" data-screen="attendance"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h17"/><path d="m7 15 4-4 3 2 6-7"/></svg><span>Attendance</span></button>
-  <button class="nav-item active" data-screen="dashboard"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1z"/></svg><span>Dashboard</span></button>
-  <button class="nav-item" data-screen="reports"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 9h18M8 13h3M8 17h7"/></svg><span>Reports</span></button>
-  <button class="nav-item" data-screen="more"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.6.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.6-.9l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.9l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.6-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.6.9l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.9z"/></svg><span>More</span></button>
+
+  <button class="nav-item" data-screen="entry">
+
+    <svg viewBox="0 0 24 24">
+      <rect x="3" y="5" width="18" height="16" rx="2"/>
+      <path d="M16 3v4M8 3v4M3 10h18"/>
+    </svg>
+
+    <span>Daily Entry</span>
+
+  </button>
+
+
+  <button class="nav-item" data-screen="attendance">
+
+    <svg viewBox="0 0 24 24">
+      <path d="M4 19V5M4 19h17"/>
+      <path d="m7 15 4-4 3 2 6-7"/>
+    </svg>
+
+    <span>Attendance</span>
+
+  </button>
+
+
+  <button
+    class="nav-item active"
+    data-screen="dashboard"
+  >
+
+    <svg viewBox="0 0 24 24">
+      <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1z"/>
+    </svg>
+
+    <span>Dashboard</span>
+
+  </button>
+
+
+  <button class="nav-item" data-screen="reports">
+
+    <svg viewBox="0 0 24 24">
+      <rect x="3" y="4" width="18" height="17" rx="2"/>
+      <path d="M16 2v4M8 2v4M3 9h18M8 13h3M8 17h7"/>
+    </svg>
+
+    <span>Reports</span>
+
+  </button>
+
+
+  <button class="nav-item" data-screen="more">
+
+    <svg viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.6.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.6-.9l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.9l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.6-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.6.9l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.9z"/>
+    </svg>
+
+    <span>More</span>
+
+  </button>
+
 </nav>
 
-  
+
+<!-- =================================
+     CHANGE SUBJECT MODAL
+================================== -->
 
 <div class="modal-overlay" id="subjectModal">
-  <div class="modal-box">
-    <h2>Change subject</h2>
-    <p class="muted" id="modalPeriod">Period 1</p>
 
-    <label for="replacementSubject">Select replacement subject</label>
+  <div class="modal-box">
+
+    <h2>Change subject</h2>
+
+    <p class="muted" id="modalPeriod">
+      Period 1
+    </p>
+
+    <label for="replacementSubject">
+      Select replacement subject
+    </label>
+
     <select id="replacementSubject">
+
       <option value="Maths">Maths</option>
       <option value="Chemistry">Chemistry</option>
       <option value="Chemistry Lab">Chemistry Lab</option>
@@ -213,827 +551,46 @@ th,td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line)}th{co
       <option value="DT">DT</option>
       <option value="ES">ES</option>
       <option value="IE">IE</option>
+
     </select>
 
-    <label for="replacementHours">Hours</label>
-    <input id="replacementHours" type="number"
-      min="0.25" max="12" step="0.25" value="1">
+
+    <label for="replacementHours">
+      Hours
+    </label>
+
+    <input
+      id="replacementHours"
+      type="number"
+      min="0.25"
+      max="12"
+      step="0.25"
+      value="1"
+    >
+
 
     <div class="modal-actions">
-      <button class="secondary" id="cancelSubject">Cancel</button>
-      <button class="primary" id="confirmSubject">Confirm</button>
+
+      <button class="secondary" id="cancelSubject">
+        Cancel
+      </button>
+
+      <button class="primary" id="confirmSubject">
+        Confirm
+      </button>
+
     </div>
+
   </div>
+
 </div>
-<script>
-"use strict";
 
-const START = "2026-08-10";
-const END = "2026-11-30";
-const KEY = "jilan_attendance_json_v1";
 
-const SUBJECTS = [
-  {name:"Maths",total:75},
-  {name:"Chemistry",total:45},
-  {name:"Chemistry Lab",total:30},
-  {name:"PSC",total:45},
-  {name:"PSC Lab",total:30},
-  {name:"Biology",total:15},
-  {name:"English",total:45},
-  {name:"DT",total:50},
-  {name:"ES",total:50},
-  {name:"IE",total:45}
-];
+<!-- =================================
+     JAVASCRIPT
+================================== -->
 
-const TIMETABLE = {
-  Monday:["DT","PSC","Chemistry","English",null,null,"Chemistry"],
-  Tuesday:["Maths","DT","PSC","ES","ES","English","DT"],
-  Wednesday:["IE",null,"PSC Lab","PSC Lab","PSC","Maths","Maths"],
-  Thursday:["Chemistry","IE","English","English","Maths","Biology","ES"],
-  Friday:["Maths","IE","Chemistry Lab","Chemistry Lab","PSC","Chemistry","IE"]
-};
+<script src="app.js"></script>
 
-const PERIOD_TIMES = [
-  "8:00–8:50 AM",
-  "8:55–9:45 AM",
-  "9:50–10:40 AM",
-  "10:45–11:35 AM",
-  "12:45–1:35 PM",
-  "1:45–2:35 PM",
-  "2:45–3:35 PM"
-];
-
-/* REPLACE THIS LINE WITH YOUR COMPLETE ORIGINAL const SEED=... LINE */
-const SEED = {"semester":{"start":"2026-08-10","end":"2026-11-30"},"subjects":[],"days":{},"gpa":{"sgpa":7.9,"cgpa":8.5}};
-
-let data;
-let currentSessions = [];
-let percentageMode = "held";
-let reportMonth = new Date(2026,7,1);
-let selectedSubject = null;
-let editingIndex = null;
-
-const $ = id => document.getElementById(id);
-const clone = x => JSON.parse(JSON.stringify(x));
-
-function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g,c=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
-}
-
-function notify(text,error=false) {
-  const box=$("message");
-  box.textContent=text;
-  box.className=error?"error":"";
-  box.style.display="block";
-  setTimeout(()=>box.style.display="none",3500);
-}
-
-function weekdayName(date) {
-  return new Date(date+"T12:00:00").toLocaleDateString("en-US",{weekday:"long"});
-}
-
-function isWeekend(date) {
-  const d=new Date(date+"T12:00:00").getDay();
-  return d===0||d===6;
-}
-
-function blankData() {
-  return {
-    semester:{start:START,end:END},
-    subjects:clone(SUBJECTS),
-    days:{},
-    gpa:{sgpa:null,cgpa:null}
-  };
-}
-
-/* Preserve existing dates, statuses, subjects and day types.
-   Do not generate sessions for empty saved dates. */
-function normalizeData(input) {
-  const d=input&&typeof input==="object"?input:blankData();
-
-  if(!d.days||typeof d.days!=="object") d.days={};
-
-  d.semester={start:START,end:END};
-  d.subjects=clone(SUBJECTS);
-
-  if(!d.gpa||typeof d.gpa!=="object") {
-    d.gpa={sgpa:null,cgpa:null};
-  }
-
-  for(const date of Object.keys(d.days)) {
-    const day=d.days[date]||{};
-    day.sessions=Array.isArray(day.sessions)?day.sessions:[];
-
-    day.sessions=day.sessions.map(s=>({
-      ...s,
-      period:Number(s.period)||1,
-      status:["P","A","N"].includes(s.status)?s.status:"N",
-      optional:!!s.optional,
-      hours:Number(s.hours)>0?Number(s.hours):1
-    }));
-
-    if(!["working","saturday","holiday"].includes(day.type)) {
-      if(isWeekend(date)) {
-        day.type=day.sessions.length?"saturday":"holiday";
-      } else {
-        day.type="working";
-      }
-    }
-
-    if(day.type==="saturday"&&!day.weekday) {
-      day.weekday="Monday";
-    }
-
-    d.days[date]=day;
-  }
-
-  return d;
-}
-
-function loadData() {
-  try {
-    const saved=localStorage.getItem(KEY);
-    data=normalizeData(saved?JSON.parse(saved):clone(SEED));
-  } catch(e) {
-    data=normalizeData(clone(SEED));
-    notify("Could not read saved data. Check your backup.",true);
-  }
-  saveData(false);
-}
-
-function saveData(show=true) {
-  localStorage.setItem(KEY,JSON.stringify(data));
-  if(show) notify("Attendance saved in this browser.");
-}
-
-function validDate(date) {
-  return date&&date>=START&&date<=END;
-}
-
-function makeSessions(date,type,rep) {
-  if(type==="holiday") return [];
-
-  const day=type==="saturday"?(rep||"Monday"):weekdayName(date);
-
-  return (TIMETABLE[day]||[]).map((subject,i)=>({
-    period:i+1,
-    subject:subject||(i===1?"Free period":"Mentoring"),
-    status:"N",
-    optional:!subject,
-    hours:1
-  }));
-}
-
-function showScreen(name) {
-  document.querySelectorAll(".screen").forEach(s=>
-    s.classList.toggle("active",s.id===name)
-  );
-
-  document.querySelectorAll(".nav-item").forEach(b=>
-    b.classList.toggle("active",b.dataset.screen===name)
-  );
-
-  window.scrollTo({top:0,behavior:"smooth"});
-
-  if(name==="dashboard") renderDashboard();
-
-  if(name==="attendance") {
-    selectedSubject=null;
-    showAttendanceOverview();
-    renderAttendance();
-  }
-
-  if(name==="reports") renderMonth();
-  if(name==="more") renderTargets();
-}
-
-document.querySelectorAll(".nav-item").forEach(b=>
-  b.addEventListener("click",()=>showScreen(b.dataset.screen))
-);
-
-/* DAILY ENTRY */
-
-function loadEntry() {
-  const date=$("date").value;
-
-  if(!validDate(date)) {
-    notify("Choose a date inside the semester.",true);
-    return;
-  }
-
-  const old=data.days[date];
-  const type=$("daytype").value;
-
-  $("weekdayWrap").style.display=type==="saturday"?"block":"none";
-  $("holidayWrap").style.display=type==="holiday"?"block":"none";
-
-  if(type==="saturday") {
-    $("weekday").value=old?.weekday||"Monday";
-  }
-
-  if(old&&old.type===type) {
-    currentSessions=clone(old.sessions||[]);
-    $("holidayReason").value=old.reason||"";
-  } else {
-    currentSessions=makeSessions(date,type,$("weekday").value);
-    $("holidayReason").value="";
-  }
-
-  drawSessions();
-}
-
-function drawSessions() {
-  const root=$("sessions");
-  root.innerHTML="";
-
-  if($("daytype").value==="holiday") {
-    root.innerHTML='<p class="muted">Holiday selected. No classes will be counted for this date.</p>';
-    return;
-  }
-
-  currentSessions.forEach((s,index)=>{
-    const card=document.createElement("div");
-    card.className="subject";
-
-    const title=document.createElement("div");
-    title.className="subject-head";
-
-    const name=document.createElement("span");
-    name.textContent=`Period ${s.period} · ${s.subject}`;
-
-    const edit=document.createElement("button");
-    edit.type="button";
-    edit.className="edit-subject";
-    edit.textContent="✎ Change";
-    edit.onclick=()=>openSubjectEditor(index);
-
-    title.appendChild(name);
-    title.appendChild(edit);
-    card.appendChild(title);
-
-    const time=document.createElement("p");
-    time.className="muted";
-    time.textContent=
-      `${PERIOD_TIMES[s.period-1]||"Time not set"} · ${s.hours||1} hour(s)`;
-    card.appendChild(time);
-
-    const choices=document.createElement("div");
-    choices.className="choices";
-
-    [["P","Present"],["A","Absent"],["N","Not Held"]].forEach(([value,label])=>{
-      const b=document.createElement("button");
-      b.textContent=label;
-
-      b.className=s.status===value?
-        (value==="P"?"selected-p":value==="A"?"selected-a":"selected-n"):"";
-
-      b.onclick=()=>{
-        currentSessions[index].status=value;
-        drawSessions();
-      };
-
-      choices.appendChild(b);
-    });
-
-    card.appendChild(choices);
-    root.appendChild(card);
-  });
-}
-
-/* SUBJECT CHANGE POPUP */
-
-function openSubjectEditor(index) {
-  editingIndex=index;
-
-  const s=currentSessions[index];
-  if(!s) return;
-
-  $("modalPeriod").textContent=
-    `Period ${s.period} · Current subject: ${s.subject}`;
-
-  $("replacementSubject").value=
-    SUBJECTS.some(x=>x.name===s.subject)?s.subject:"Maths";
-
-  $("replacementHours").value=s.hours||1;
-  $("subjectModal").classList.add("open");
-}
-
-function closeSubjectEditor() {
-  $("subjectModal").classList.remove("open");
-  editingIndex=null;
-}
-
-$("cancelSubject").onclick=closeSubjectEditor;
-
-$("subjectModal").addEventListener("click",e=>{
-  if(e.target===$("subjectModal")) closeSubjectEditor();
-});
-
-$("confirmSubject").onclick=()=>{
-  if(editingIndex===null) return;
-
-  const subject=$("replacementSubject").value;
-  const hours=Number($("replacementHours").value);
-
-  if(!SUBJECTS.some(x=>x.name===subject)) {
-    notify("Choose a valid subject.",true);
-    return;
-  }
-
-  if(!Number.isFinite(hours)||hours<0.25||hours>12) {
-    notify("Hours must be between 0.25 and 12.",true);
-    return;
-  }
-
-  currentSessions[editingIndex].subject=subject;
-  currentSessions[editingIndex].hours=hours;
-  currentSessions[editingIndex].optional=false;
-
-  closeSubjectEditor();
-  drawSessions();
-  notify("Period updated. Press Save attendance to store the change.");
-};
-
-/* SAVE AND CLEAR */
-
-function saveDay() {
-  const date=$("date").value;
-
-  if(!validDate(date)) {
-    notify("Invalid semester date.",true);
-    return;
-  }
-
-  const type=$("daytype").value;
-
-  if(type==="holiday") {
-    data.days[date]={
-      type:"holiday",
-      reason:$("holidayReason").value.trim()||"Holiday",
-      sessions:[]
-    };
-  } else {
-    data.days[date]={
-      type,
-      weekday:type==="saturday"?$("weekday").value:null,
-      sessions:clone(currentSessions)
-    };
-  }
-
-  saveData(false);
-  refreshAll();
-  notify("Attendance saved for "+date+".");
-}
-
-function clearDay() {
-  const date=$("date").value;
-  if(!validDate(date)) return;
-
-  if(isWeekend(date)) {
-    data.days[date]={type:"holiday",sessions:[]};
-  } else {
-    data.days[date]={
-      type:"working",
-      weekday:null,
-      sessions:[]
-    };
-  }
-
-  saveData(false);
-  loadEntry();
-  refreshAll();
-  notify("Date cleared. No attendance sessions were generated.");
-}
-
-$("date").value="2026-11-05";
-
-$("date").onchange=()=>{
-  const date=$("date").value;
-  const old=data.days[date];
-
-  $("daytype").value=old?.type||
-    (isWeekend(date)?"holiday":"working");
-
-  loadEntry();
-};
-
-$("daytype").onchange=loadEntry;
-
-$("weekday").onchange=()=>{
-  currentSessions=makeSessions(
-    $("date").value,
-    "saturday",
-    $("weekday").value
-  );
-  drawSessions();
-};
-
-$("saveDay").onclick=saveDay;
-$("clearDay").onclick=clearDay;
-
-/* ATTENDANCE CALCULATIONS
-   Hours are stored separately.
-   Attendance remains period-based, not hour-weighted. */
-
-function calculate(days) {
-  const subjects={};
-
-  SUBJECTS.forEach(s=>{
-    subjects[s.name]={
-      ...s,
-      held:0,
-      present:0,
-      absent:0,
-      notheld:0
-    };
-  });
-
-  for(const day of days) {
-    if(!day||day.type==="holiday") continue;
-
-    for(const s of day.sessions||[]) {
-      const item=subjects[s.subject];
-
-      if(!item||s.optional) continue;
-
-      if(s.status==="P") {
-        item.held++;
-        item.present++;
-      } else if(s.status==="A") {
-        item.held++;
-        item.absent++;
-      } else if(s.status==="N") {
-        item.notheld++;
-      }
-    }
-  }
-
-  const total=Object.values(subjects).reduce((a,s)=>({
-    held:a.held+s.held,
-    present:a.present+s.present,
-    absent:a.absent+s.absent,
-    notheld:a.notheld+s.notheld,
-    target:a.target+s.total
-  }),{
-    held:0,present:0,absent:0,notheld:0,target:0
-  });
-
-  return {subjects,total};
-}
-
-function percent(a,b){
-  return b ? Math.min(100, (100*a)/b) : 0;
-}
-function showPercent(a,b){
-  return b ? percent(a,b).toFixed(2)+"%" : "—";
-}
-
-function selectedPercent(s){
-  return showPercent(s.present,s.total);
-}
-function showAttendanceOverview() {
-  $("attendanceOverview").style.display="block";
-  $("subjectDetail").style.display="none";
-}
-
-function renderAttendance() {
-  const {subjects,total}=calculate(Object.values(data.days));
-
-  $("overallPercent").textContent=showPercent(total.present,total.target);
-
-  $("totalHeld").textContent=total.held;
-  $("totalPresent").textContent=total.present;
-  $("totalAbsent").textContent=total.absent;
-  $("totalNotHeld").textContent=total.notheld;
-
-  $("formula").textContent="Held % = Present ÷ Total Classes (Settings) × 100. Maximum = 100%.";
-  const list=Object.values(subjects).sort((a,b)=>{
-    const pa=percent(a.present,a.total);
-    const pb=percent(b.present,b.total);
-
-    return $("sort").value==="asc"?pa-pb:pb-pa;
-});
-
-  $("subjectReports").innerHTML=list.map(s=>{
-    const p=percent(s.present,s.total);
-    return `
-      <div class="subject clickable" role="button" tabindex="0"
-        data-subject="${escapeHTML(s.name)}">
-        <div class="subject-head">
-          <span>${escapeHTML(s.name)}</span>
-          <strong>${selectedPercent(s)}</strong>
-        </div>
-        <div class="muted">
-          ${s.present} present · ${s.absent} absent ·
-          ${s.held} held · target ${s.total}
-        </div>
-        <div class="progress">
-          <span style="width:${Math.min(100,p)}%"></span>
-        </div>
-      </div>`;
-  }).join("");
-
-  $("subjectReports").querySelectorAll("[data-subject]").forEach(el=>{
-    const open=()=>openSubject(el.dataset.subject);
-
-    el.addEventListener("click",open);
-
-    el.addEventListener("keydown",e=>{
-      if(e.key==="Enter"||e.key===" ") {
-        e.preventDefault();
-        open();
-      }
-    });
-  });
-}
-
-function openSubject(name) {
-  selectedSubject=name;
-
-  $("attendanceOverview").style.display="none";
-  $("subjectDetail").style.display="block";
-
-  const all=[];
-
-  Object.entries(data.days)
-    .sort(([a],[b])=>a.localeCompare(b))
-    .forEach(([date,day])=>{
-      if(day.type==="holiday") return;
-
-      (day.sessions||[])
-        .filter(s=>s.subject===name&&!s.optional)
-        .forEach(s=>all.push({date,day,s}));
-    });
-
-  const counts={P:0,A:0,N:0};
-  all.forEach(x=>counts[x.s.status]++);
-
-  const totalClasses=SUBJECTS.find(s=>s.name===name).total;
-
-  $("detailName").textContent=name;
-  $("detailSummary").textContent=
-    `${all.length} saved period entries · Semester target ${
-      SUBJECTS.find(s=>s.name===name).total
-    }`;
-
-  $("detailP").textContent=counts.P;
-  $("detailA").textContent=counts.A;
-  $("detailN").textContent=counts.N;
-  $("detailPct").textContent=showPercent(counts.P,totalClasses);
-
-  $("subjectDateRecords").innerHTML=all.length?
-    all.map(({date,s})=>`
-      <div class="record-line">
-        <div>
-          <strong>${new Date(date+"T12:00:00").toLocaleDateString(
-            "en-GB",
-            {weekday:"long",day:"2-digit",month:"short",year:"numeric"}
-          )}</strong>
-          <div class="record-meta">
-            Period ${s.period} ·
-            ${escapeHTML(PERIOD_TIMES[s.period-1]||"Time not set")}
-            · ${s.hours||1} hour(s)
-          </div>
-        </div>
-        <span class="status ${s.status}">${s.status}</span>
-      </div>
-    `).join("") :
-    '<div class="empty">No saved attendance entries for this subject yet.</div>';
-
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-
-$("backSubjects").onclick=()=>{
-  showAttendanceOverview();
-  renderAttendance();
-};
-
-$("heldButton").onclick=()=>{
-  percentageMode="held";
-  $("heldButton").className="chosen";
-  $("overallButton").className="secondary";
-  renderAttendance();
-};
-
-$("overallButton").onclick=()=>{
-  percentageMode="overall";
-  $("overallButton").className="chosen";
-  $("heldButton").className="secondary";
-  renderAttendance();
-};
-
-$("sort").onchange=renderAttendance;
-
-/* DASHBOARD */
-
-function renderDashboard() {
-  const {subjects,total}=calculate(Object.values(data.days));
-
-  $("todayLabel").textContent=new Date().toLocaleDateString(undefined,{
-    weekday:"long",day:"numeric",month:"long",year:"numeric"
-  });
-
-  $("dashPercent").textContent=showPercent(total.present,total.held);
-  $("dashPresent").textContent=total.present;
-  $("dashHeld").textContent=total.held;
-
-  $("dashboardSubjects").innerHTML=SUBJECTS.map(s=>{
-    const x=subjects[s.name];
-    const p=percent(x.present,x.total);
-
-    return `
-      <div class="subject clickable" data-subject="${escapeHTML(s.name)}">
-        <div class="subject-head">
-          <span>${escapeHTML(s.name)}</span>
-          <span class="badge">${x.held} / ${s.total} held</span>
-        </div>
-        <div class="muted">
-          ${x.present} present · ${x.absent} absent ·
-          ${p.toFixed(2)}% of target
-        </div>
-        <div class="progress">
-          <span style="width:${Math.min(100,p)}%"></span>
-        </div>
-      </div>`;
-  }).join("");
-
-  $("dashboardSubjects").querySelectorAll("[data-subject]").forEach(el=>{
-    el.onclick=()=>{
-      showScreen("attendance");
-      openSubject(el.dataset.subject);
-    };
-  });
-
-  $("sgpa").value=data.gpa?.sgpa??"";
-  $("cgpa").value=data.gpa?.cgpa??"";
-}
-
-$("saveGpa").onclick=()=>{
-  const a=$("sgpa").value;
-  const b=$("cgpa").value;
-
-  if((a!==""&&(Number(a)<0||Number(a)>10))||
-     (b!==""&&(Number(b)<0||Number(b)>10))) {
-    return notify("SGPA and CGPA must be between 0 and 10.",true);
-  }
-
-  data.gpa={
-    sgpa:a===""?null:Number(a),
-    cgpa:b===""?null:Number(b)
-  };
-
-  saveData();
-};
-
-/* MONTHLY REPORTS */
-
-function renderMonth() {
-  const y=reportMonth.getFullYear();
-  const m=reportMonth.getMonth();
-
-  $("monthName").textContent=
-    reportMonth.toLocaleDateString("en-US",{month:"long",year:"numeric"});
-
-  const entries=Object.entries(data.days)
-    .filter(([date])=>{
-      const d=new Date(date+"T12:00:00");
-      return d.getFullYear()===y&&d.getMonth()===m;
-    })
-    .sort(([a],[b])=>a.localeCompare(b));
-
-  const {total}=calculate(entries.map(x=>x[1]));
-
-  $("monthHeld").textContent=total.held;
-  $("monthPresent").textContent=total.present;
-  $("monthAbsent").textContent=total.absent;
-  $("monthPercent").textContent=showPercent(total.present,total.held);
-
-  $("monthRecords").innerHTML=entries.map(([date,day])=>{
-    const c=calculate([day]).total;
-
-    const label=day.type==="holiday"?"Holiday":
-      day.type==="saturday"?"Special Saturday":"Working day";
-
-    return `
-      <div class="day-card">
-        <div class="subject-head">
-          <strong>${new Date(date+"T12:00:00").toLocaleDateString(
-            "en-US",{weekday:"short",day:"numeric",month:"short"}
-          )}</strong>
-          <span class="badge">${label}</span>
-        </div>
-        <small>${
-          day.type==="holiday"?
-          escapeHTML(day.reason||"Holiday"):
-          `${c.present} present · ${c.absent} absent · ${c.notheld} not held`
-        }</small>
-      </div>`;
-  }).join("")||'<div class="empty">No saved records for this month.</div>';
-}
-
-$("previousMonth").onclick=()=>{
-  reportMonth.setMonth(reportMonth.getMonth()-1);
-
-  if(reportMonth<new Date(2026,7,1)) {
-    reportMonth=new Date(2026,7,1);
-  }
-
-  renderMonth();
-};
-
-$("nextMonth").onclick=()=>{
-  reportMonth.setMonth(reportMonth.getMonth()+1);
-
-  if(reportMonth>new Date(2026,10,1)) {
-    reportMonth=new Date(2026,10,1);
-  }
-
-  renderMonth();
-};
-
-/* TARGETS AND BACKUP */
-
-function renderTargets() {
-  const {subjects}=calculate(Object.values(data.days));
-
-  $("targetRows").innerHTML=SUBJECTS.map(s=>{
-    const x=subjects[s.name];
-
-    return `
-      <tr>
-        <td>${escapeHTML(s.name)}</td>
-        <td>${s.total}</td>
-        <td>${x.held}</td>
-        <td>${x.present}</td>
-      </tr>`;
-  }).join("");
-
-  $("storageInfo").textContent=
-    Object.keys(data.days).length+" saved dates · Browser storage key: "+KEY;
-}
-
-$("export").onclick=()=>{
-  const blob=new Blob(
-    [JSON.stringify(data,null,2)],
-    {type:"application/json"}
-  );
-
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-
-  a.href=url;
-  a.download="jilan-attendance-backup.json";
-  a.click();
-
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-  notify("JSON backup exported.");
-};
-
-$("import").onclick=async()=>{
-  const file=$("importFile").files[0];
-
-  if(!file) return notify("Choose a JSON file first.",true);
-
-  try {
-    const imported=JSON.parse(await file.text());
-
-    if(!imported.days) {
-      throw new Error("This JSON does not contain attendance days.");
-    }
-
-    data=normalizeData(imported);
-    saveData(false);
-    refreshAll();
-    loadEntry();
-
-    notify("Backup imported. Existing attendance is retained.");
-  } catch(e) {
-    notify("Import failed: "+e.message,true);
-  }
-};
-
-function refreshAll() {
-  renderDashboard();
-  renderAttendance();
-  renderMonth();
-  renderTargets();
-}
-
-/* START APPLICATION */
-
-loadData();
-
-const firstDate=$("date").value;
-const stored=data.days[firstDate];
-
-$("daytype").value=stored?.type||
-  (isWeekend(firstDate)?"holiday":"working");
-
-loadEntry();
-refreshAll();
-
-</script>
-  
- 
+</body>
+</html>
