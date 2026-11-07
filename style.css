@@ -5,6 +5,72 @@
    Complete style.css
 ================================================= */
 
+/* =========================================
+   SELF ATTENDANCE — CUSTOM FONTS
+========================================= */
+
+@font-face {
+  font-family: "Akira";
+  src: url("assets/fonts/Akira-Expanded.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gohan";
+  src: url("assets/fonts/Gohan.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tommy";
+  src: url("assets/fonts/MADE-Tommy-Soft-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tommy";
+  src: url("assets/fonts/MADE-Tommy-Soft-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tommy";
+  src: url("assets/fonts/MADE-Tommy-Soft-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Nexa";
+  src: url("assets/fonts/Nexa-ExtraLight.ttf") format("truetype");
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Nexa";
+  src: url("assets/fonts/Nexa-Heavy.ttf") format("truetype");
+  font-weight: 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Strong";
+  src: url("assets/fonts/Strong.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lokeya";
+  src: url("assets/fonts/Lokeya.ttf") format("truetype");
+  font-display: swap;
+}
+
+
+
+
 :root {
   color-scheme: dark;
 
